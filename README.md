@@ -64,5 +64,66 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-3Bar Biologics is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+3Bar Biologics (3BarBio) is an agricultural biotechnology company in Columbus, Ohio, spun out of
+research at The Ohio State University and operating as the first contract development and
+manufacturing organization (CDMO) dedicated to agricultural biologicals. Its patented LiveMicrobe
+platform — including the Iso-Pak and Re-Pak delivery systems — keeps beneficial bacteria viable
+through storage and distribution, the problem that has historically limited adoption of microbial
+crop inputs.
+
+## What this profile found
+
+**3Bar Biologics is not a software vendor and publishes no developer program.** There is no
+developer portal, no API documentation, no SDK, no client library in any package registry, no GitHub
+organization and no pricing for any programmatic product.
+
+The only machine-readable interface the company exposes is the **WordPress REST content API** behind
+its corporate website at `www.3barbiologics.com`. It is anonymously readable, read-only, and
+incidental to the website rather than offered as a product. It carries the company's news archive and
+marketing pages — nothing about strains, formulations, batches, viability testing or customers.
+
+That surface is nonetheless real, self-describing and worth cataloging, so it is documented here in
+full: **9 APIs, 19 operations**, every one derived from the server's own published route index
+(`GET /wp-json/`, 360 routes across 17 namespaces) and its per-route JSON Schemas (`HTTP OPTIONS`).
+No part of any specification in `openapi/` was authored from documentation or inference.
+
+## Defects verified on this deployment (2026-09-05)
+
+These were reproduced live, not inferred. They are recorded in `errors/`, `lifecycle/`, `security/`
+and at the operation level in `overlays/`.
+
+| # | Surface | Finding |
+|---|---|---|
+| 1 | `GET /wp/v2/media` | Returns **HTTP 500** for any ascending numeric or date sort (`order=asc`, `orderby=date\|id\|author`). The body is HTML, not the JSON error envelope. `orderby=title\|slug` ascending works; descending always works. Posts and pages are unaffected. |
+| 2 | `GET /wp/v2/media` | Advertises `X-WP-Total: 560` while anonymous pages return 0–5 records with **HTTP 200**. Fails silently — an empty 200 is indistinguishable from an exhausted collection. |
+| 3 | `GET /yoast/v1/get_head` | Returns **404 with a populated, parseable body** (the head of the site's 404 page). Branch on status, not body shape. |
+| 4 | `https://www.3barbiologics.com/careers/` | **Infinite redirect loop** — `/careers/` → `/about-us/careers/` → `/careers/`. The page is readable through the Pages API but unreachable in a browser. |
+| 5 | `https://3barbiologics.com/` | **Apex domain serves a certificate that does not cover it** (`CN=pantheonsite.io`). HTTPS fails; plain HTTP returns 404 without redirecting. Only the `www.` host works. |
+| 6 | `https://www.3barbiologics.com/` | **79 absolute URLs to Pantheon pre-production hostnames** in the production HTML, including the site's only Privacy Policy link, which points at `dev-3bar-biologics.pantheonsite.io`. That dev environment is publicly reachable and serves the same REST API. |
+
+## Contents
+
+| Path | What is there |
+|---|---|
+| `openapi/` | 9 OpenAPI 3.1 documents, 19 operations, derived from the server's published schemas |
+| `overlays/` | Per-spec Overlay 1.0.0 documents carrying provenance, stability posture and the defects above |
+| `authentication/` | Anonymous read; application passwords gate the unreachable write surface |
+| `conventions/` | Pagination, sparse fields, caching, CORS, tracing. Idempotency and reversibility are `na` — read-only surface |
+| `errors/` | 13 problem types and 2 silent failures, every one observed live |
+| `data-model/` | 10 entities and their relationships — and an explicit note on the domain entities that do **not** exist |
+| `lifecycle/` | No versioning policy, no deprecation policy, no SLA, no status page, no changelog. Graded `unmanaged` |
+| `conformance/` | 16 standards checked; domain standards (ADAPT, ISOBUS, GS1) recorded as inapplicable, not failed |
+| `security/` | Domain security probe with 5 findings, including the apex TLS mismatch and the dev-host leak |
+| `well-known/` | 18 probes across 2 hosts, 0 documents found — a recorded absence |
+| `rate-limits/`, `plans/` | Honest zeros: no limits published, no pricing published |
+| `packages/` | 0 packages. Every major registry queried; no first-party library exists |
+| `mcp/` | No server exists. A candidate tool list only, `mode: none` |
+| `skills/` | 2 packaged Agent Skills grounded in verified operationIds |
+| `examples/` | 11 working requests and 2 counter-examples, all executed successfully |
+| `agentic-access/` | Per-operation access contract. Entire surface classified `safe-read-only` |
+
+## Company
+
+- **Website** — https://www.3barbiologics.com/ (use the `www.` host)
+- **Contact** — Sales@3BarBiologics.com · 1-877-3BAR-BIO · 1275 Kinnear Road, Columbus, OH 43212
+- **LinkedIn** — https://www.linkedin.com/company/3bar-biologics-inc-/

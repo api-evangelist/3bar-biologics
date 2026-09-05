@@ -1,0 +1,59 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the 3Bar Biologics oEmbed API
+  version: 1.0.0
+  description: 'Enhancements API Evangelist adds on top of the derived contract: provenance, the operating
+    rules that are not expressible in OpenAPI, the stability posture, and the defects reproduced live
+    on 2026-09-05. The original document in openapi/ is never mutated.'
+extends: openapi/3bar-biologics-oembed-api-openapi.yml
+x-provenance:
+  generated: '2026-09-05'
+  method: generated
+  source: openapi/3bar-biologics-oembed-api-openapi.yml
+actions:
+- target: $.info
+  description: Record that this contract was reverse-engineered by API Evangelist from the server's own
+    published route index and JSON Schemas, not published by 3Bar Biologics.
+  update:
+    x-api-evangelist:
+      profile: https://apis.io/provider/3bar-biologics
+      authored_by: API Evangelist
+      authored_from: https://www.3barbiologics.com/wp-json/ (route index) and HTTP OPTIONS per route (JSON
+        Schemas)
+      provider_published_documentation: false
+      note: 3Bar Biologics publishes no API documentation, no developer portal and no specification. This
+        document is an independent description of a surface the company exposes incidentally behind its
+        marketing website.
+- target: $.info
+  description: Attach the consumer-facing operating rules that are not expressible in OpenAPI itself.
+  update:
+    x-conventions: conventions/3bar-biologics-conventions.yml
+    x-error-catalog: errors/3bar-biologics-problem-types.yml
+    x-lifecycle: lifecycle/3bar-biologics-lifecycle.yml
+    x-authentication: authentication/3bar-biologics-authentication.yml
+    x-agentic-access: agentic-access/3bar-biologics-agentic-access.yml
+- target: $.info
+  description: State the stability posture plainly, since the provider makes no commitment.
+  update:
+    x-stability:
+      grade: unmanaged
+      versioning_policy: false
+      deprecation_policy: false
+      status_page: false
+      changelog: false
+      support_channel: false
+      detail: No commitment of any kind is made to third-party consumers. Routes can disappear when a
+        WordPress plugin is deactivated.
+- target: $.servers[0]
+  description: Warn that only the www host is usable; the apex domain fails TLS.
+  update:
+    x-host-caveat: Use www.3barbiologics.com only. The apex domain 3barbiologics.com resolves to Pantheon
+      but presents a certificate for CN=pantheonsite.io that does not cover the name, so HTTPS fails;
+      plain HTTP on the apex returns 404 without redirecting.
+- target: $.paths.*.get
+  description: Record that no runtime rate-limit signal exists on any operation, and that reads may be
+    served stale from the edge.
+  update:
+    x-rate-limit-signal: none — no RateLimit-*, X-RateLimit-* or Retry-After header is returned. Self-throttle.
+    x-cache-staleness: 'Cache-Control: public, max-age=604800 behind Varnish/Fastly. A read may be up
+      to 7 days stale.'

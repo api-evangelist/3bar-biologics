@@ -1,0 +1,92 @@
+generated: '2026-09-05'
+method: probed
+source: live requests against https://www.3barbiologics.com/wp-json/
+description: >-
+  Working, copy-pasteable requests against the 3barbiologics.com content API, every one of which was
+  executed successfully on 2026-09-05. No credential is required for any of them. Response shapes
+  described here are what the server actually returned, not what documentation promises — the
+  company publishes none.
+examples:
+- name: List the ten most recent news posts, cheaply
+  operation: listPosts
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/posts?per_page=10&_fields=id,date,slug,link,title'
+  http_status: 200
+  notes: >-
+    `_fields` is the difference between a ~16KB record and a few hundred bytes. Read X-WP-Total (51
+    at capture) and X-WP-TotalPages from the response headers to plan pagination.
+- name: Page through the whole archive safely
+  operation: listPosts
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/posts?per_page=100&page=1'
+  http_status: 200
+  notes: >-
+    100 is the maximum per_page; 101 returns 400 rest_invalid_param. Stop when the Link header stops
+    carrying rel="next" rather than incrementing until you get a 400 rest_post_invalid_page_number.
+- name: Resolve a post with its author, image and terms in one request
+  operation: getPost
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/posts/10844?_embed'
+  http_status: 200
+  notes: >-
+    `_embed` inlines author, featured media and terms under `_embedded`, collapsing four requests
+    into one. Post 10844 (dated 2026-08-18) was the most recent post at capture.
+- name: Filter the archive to press releases
+  operation: listPosts
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/posts?categories=7&per_page=5&_fields=id,title,link,date'
+  http_status: 200
+  notes: 'Category 7 is Press Release (19 posts). Category 8 is In the News (22), 17 Insights (19), 6 News (15).'
+- name: Enumerate every published page on the site
+  operation: listPages
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/pages?per_page=100&_fields=id,slug,link,title'
+  http_status: 200
+  notes: 'Returns all 14 pages in one request. This is the cheapest complete map of the site.'
+- name: Search across all public content
+  operation: searchContent
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/search?search=biologics&per_page=20'
+  http_status: 200
+  notes: >-
+    Returned X-WP-Total 58 at capture. Results are lightweight {id,title,url,type,subtype}; fetch
+    /wp/v2/<subtype>/<id> to resolve one fully.
+- name: Read the self-describing route index
+  operation: getApiRoot
+  request: 'GET https://www.3barbiologics.com/wp-json/'
+  http_status: 200
+  notes: >-
+    360 routes across 17 namespaces at capture, each with its argument schema. This is the document
+    every OpenAPI in this repository was derived from. It is roughly 340KB — request it once and
+    cache it.
+- name: Get the published JSON Schema for a resource
+  operation: null
+  request: 'OPTIONS https://www.3barbiologics.com/wp-json/wp/v2/posts'
+  http_status: 200
+  notes: >-
+    Returns the route's own `schema` (27 properties for a post) plus per-endpoint argument
+    definitions. Every resource schema in openapi/ came from here.
+- name: Get oEmbed metadata for a page
+  operation: getOembed
+  request: 'GET https://www.3barbiologics.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.3barbiologics.com%2Fwhy-3bar%2F'
+  http_status: 200
+  notes: 'Returns provider_name "3BarBio", author, title, dimensions and iframe HTML.'
+- name: Get structured data for any page without parsing HTML
+  operation: getSeoHead
+  request: 'GET https://www.3barbiologics.com/wp-json/yoast/v1/get_head?url=https%3A%2F%2Fwww.3barbiologics.com%2Fwhy-3bar%2F'
+  http_status: 200
+  notes: >-
+    Returns the rendered head plus its parsed schema.org @graph. Note this endpoint answers 404 with
+    a populated body for URLs that do not resolve — branch on the status code, not the body.
+- name: List the news authors
+  operation: listUsers
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/users?_fields=id,name,slug,link'
+  http_status: 200
+  notes: 'Three public authors at capture.'
+counter_examples:
+- name: Do NOT sort the media collection ascending
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/media?order=asc&per_page=3'
+  http_status: 500
+  notes: >-
+    Returns an HTML error page, not a JSON envelope. Reproduces for orderby=date, id and author. Use
+    the default descending order, or sort ascending by title or slug, which do work.
+- name: Do NOT trust X-WP-Total on the media collection
+  request: 'GET https://www.3barbiologics.com/wp-json/wp/v2/media?per_page=5'
+  http_status: 200
+  notes: >-
+    Returns 0 records with HTTP 200 while advertising X-WP-Total 560. An empty 200 here does not mean
+    the collection is exhausted.

@@ -1,0 +1,24 @@
+generated: '2026-09-05'
+method: searched
+source: npm, PyPI, RubyGems, crates.io, Packagist and the GitHub API
+package_count: 0
+official_count: 0
+packages: []
+note: >-
+  3Bar Biologics publishes no client libraries. Every registry was queried directly and none returned
+  a package attributable to the company, and no GitHub organization exists under any of the obvious
+  names, so there is no source repository to derive candidates from either. No SDKs pointer is
+  emitted in apis.yml, because sdk_count must reflect libraries the provider actually ships. Nothing
+  here is missing that could be found: the company sells contract biomanufacturing services and has
+  no software product for a client library to wrap. Consumers of the WordPress content API captured
+  in this repository should use a generic HTTP client or an existing third-party WordPress REST
+  client, neither of which is a 3Bar artifact.
+registries_searched:
+- {registry: npm, query: '3bar biologics', results: 2, attributable: 0, note: 'Both hits are unrelated third-party packages (@datagrok/biologics, @disclosureos/observables).'}
+- {registry: npm, query: '3barbio', results: 0, attributable: 0}
+- {registry: pypi, query: '3bar-biologics', http_status: 404, attributable: 0}
+- {registry: pypi, query: '3barbio', http_status: 404, attributable: 0}
+- {registry: rubygems, query: '3bar-biologics', http_status: 404, attributable: 0}
+- {registry: crates.io, query: '3bar', results: 'unrelated only', attributable: 0}
+- {registry: packagist, query: '3barbio', results: 0, attributable: 0}
+- {registry: 'github (orgs)', query: '3barbio / 3bar-biologics / 3BarBiologics', http_status: 404, attributable: 0}

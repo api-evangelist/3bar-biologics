@@ -1,18 +1,322 @@
 aid: 3bar-biologics
 name: 3Bar Biologics
-description: '3Bar Biologics is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  3Bar Biologics (3BarBio) is an agricultural biotechnology company in Columbus, Ohio, spun out of
+  research at The Ohio State University and operating as the first contract development and
+  manufacturing organization (CDMO) dedicated to agricultural biologicals. Its business is getting
+  living microbes to the field alive: the patented LiveMicrobe platform, including the Iso-Pak and
+  Re-Pak delivery systems, keeps beneficial bacteria viable through storage and distribution, the
+  problem that has historically limited adoption of microbial crop inputs. The company sells design,
+  development, biomanufacturing and fulfillment services to discovery companies, distributors and
+  bulk suppliers, and previously marketed its own Bio-YIELD inoculant to corn, soybean and wheat
+  growers in the eastern Corn Belt. 3Bar Biologics is a manufacturer and services business, not a
+  software vendor: it publishes no developer program, no developer portal, no API documentation, no
+  SDKs and no pricing for any programmatic product. The only machine-readable interface it exposes
+  is the WordPress REST content API behind its corporate website at www.3barbiologics.com, which is
+  captured here for discovery purposes. That surface is anonymously readable, read-only, entirely
+  undocumented by the company, and carries two reproducible defects on its media collection that are
+  recorded in this profile.
 url: https://raw.githubusercontent.com/api-evangelist/3bar-biologics/refs/heads/main/apis.yml
+image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-09-05'
 modified: '2026-09-05'
+position: Producing
 tags:
 - Company
-apis: []
+- Agriculture
+- AgTech
+- Biotechnology
+- Agricultural Biologicals
+- Biomanufacturing
+- CDMO
+- Microbials
+- Crop Inputs
+- Sustainability
+- Contract Manufacturing
+- Content
+deliveryModel:
+  model: on-premise-content
+  open_source: false
+  commercial: false
+  callable_host: true
+  label: Incidental CMS content API behind a corporate marketing site
+  confidence: high
+  source:
+  - openapi
+  - authentication
+  generated: '2026-09-05'
+  method: derived
+accessModel:
+  pricing: none
+  onboarding: none
+  trial: false
+  try_now: true
+  public: true
+  label: Public read-only content API, no signup, no credential
+  confidence: high
+  source:
+  - authentication
+  generated: '2026-09-05'
+  method: derived
+apis:
+- aid: 3bar-biologics:3bar-biologics-posts-api
+  name: 3Bar Biologics Posts API
+  description: >-
+    Public, unauthenticated read access to the 3BarBio news, press-release and insights archive via
+    the WordPress core REST API. Verified live on 2026-09-05 at 51 published posts.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - Posts
+  - Content
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-posts-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-posts-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: DataModel
+    url: data-model/3bar-biologics-data-model.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-pages-api
+  name: 3Bar Biologics Pages API
+  description: >-
+    Public, unauthenticated read access to the static marketing and policy pages of
+    3barbiologics.com — Why 3Bar?, Innovative Biomanufacturing, Design/Develop/Deliver, LiveMicrobe
+    Products, Case Studies, News, Insights, Careers, Contact Us and Privacy Policy. Verified live on
+    2026-09-05 at 14 published pages.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - Pages
+  - Content
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-pages-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-pages-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: DataModel
+    url: data-model/3bar-biologics-data-model.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-media-api
+  name: 3Bar Biologics Media API
+  description: >-
+    Public, unauthenticated read access to the media library behind 3barbiologics.com — product and
+    facility photography, LiveMicrobe packaging imagery and press assets. The server reports 560
+    attachments, but this is the one collection on the surface that does not work as advertised: it
+    returns HTTP 500 for every ascending numeric or date sort, and its advertised total does not
+    match what an anonymous caller can retrieve. Both defects are reproduced and evidenced in the
+    spec.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - Media
+  - Content
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-media-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-media-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: DataModel
+    url: data-model/3bar-biologics-data-model.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-taxonomy-api
+  name: 3Bar Biologics Taxonomy API
+  description: >-
+    Public, unauthenticated read access to the classification terms behind the 3BarBio news archive —
+    the post categories and post tags used to segment company news, press releases and technical
+    insights. Verified live on 2026-09-05 at 5 categories and 3 tags.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - Categories
+  - Tags
+  - Content
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-taxonomy-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-taxonomy-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: DataModel
+    url: data-model/3bar-biologics-data-model.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-users-api
+  name: 3Bar Biologics Users API
+  description: >-
+    Public, unauthenticated read access to the public author records behind the 3BarBio news
+    archive. Verified live on 2026-09-05 at 3 authors.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - User
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-users-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-users-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: DataModel
+    url: data-model/3bar-biologics-data-model.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-search-api
+  name: 3Bar Biologics Search API
+  description: >-
+    Public, unauthenticated cross-content search over 3barbiologics.com, returning lightweight id /
+    title / url / type / subtype records that are cheap to page and resolve. Verified live on
+    2026-09-05 at 58 matches for the query `biologics`.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - Search
+  - Content
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-search-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-search-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-discovery-api
+  name: 3Bar Biologics Discovery API
+  description: >-
+    Public, unauthenticated discovery metadata for 3barbiologics.com — the self-describing route
+    index (360 routes across 17 namespaces at capture), the registered content types and taxonomies,
+    and the publication statuses. This is the surface that makes the rest of the API
+    machine-readable in the complete absence of any published documentation, and it is what every
+    OpenAPI in this repository was derived from.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - Discovery
+  - Metadata
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-discovery-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-discovery-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-oembed-api
+  name: 3Bar Biologics oEmbed API
+  description: >-
+    Public oEmbed 1.0 provider endpoint for 3barbiologics.com URLs, returning embeddable rich
+    metadata — provider, author, title, thumbnail and iframe HTML — for any post or page on the
+    site. This is the one endpoint on the surface that implements a published third-party
+    interoperability standard rather than a WordPress-internal convention.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - oEmbed
+  - Metadata
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-oembed-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-oembed-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
+- aid: 3bar-biologics:3bar-biologics-seo-api
+  name: 3Bar Biologics SEO Metadata API
+  description: >-
+    Public Yoast SEO head endpoint returning the rendered head metadata and its parsed schema.org
+    JSON-LD graph for any 3barbiologics.com URL — a structured-data view of every page that does not
+    require parsing HTML. Running Yoast SEO v28.1 at capture.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - SEO
+  - Metadata
+  - JSON-LD
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-seo-api-openapi.yml
+  - type: Overlay
+    url: overlays/3bar-biologics-seo-api-overlay.yaml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +324,55 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.3barbiologics.com/
+- type: About
+  url: https://www.3barbiologics.com/why-3bar/
+- type: Solutions
+  url: https://www.3barbiologics.com/livemicrobe-products/
+- type: Services
+  url: https://www.3barbiologics.com/design-develop-deliver/
+- type: CaseStudies
+  url: https://www.3barbiologics.com/case-studies/
+- type: Blog
+  url: https://www.3barbiologics.com/news-insights/
+- type: BlogRSS
+  url: https://www.3barbiologics.com/feed/
+- type: Contact
+  url: https://www.3barbiologics.com/contact-us/
+- type: PrivacyPolicy
+  url: https://www.3barbiologics.com/privacy-policy/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/3bar-biologics-inc-/
+- type: Authentication
+  url: authentication/3bar-biologics-authentication.yml
+- type: ErrorCatalog
+  url: errors/3bar-biologics-problem-types.yml
+- type: Conventions
+  url: conventions/3bar-biologics-conventions.yml
+- type: DataModel
+  url: data-model/3bar-biologics-data-model.yml
+- type: Conformance
+  url: conformance/3bar-biologics-conformance.yml
+- type: Lifecycle
+  url: lifecycle/3bar-biologics-lifecycle.yml
+- type: RateLimits
+  url: rate-limits/3bar-biologics-rate-limits.yml
+- type: Plans
+  url: plans/3bar-biologics-plans-pricing.yml
+- type: LLMsTxt
+  url: llms/3bar-biologics-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Examples
+  url: examples/3bar-biologics-examples.yml
+- type: AgenticAccess
+  url: agentic-access/3bar-biologics-agentic-access.yml
+- type: DomainSecurity
+  url: security/3bar-biologics-domain-security.yml
+- type: Packages
+  url: packages/3bar-biologics-packages.yml
+x-enrichment:
+  date: '2026-09-05'
+  status: enriched
+  artifacts_added: 36
+  pass: local-v3

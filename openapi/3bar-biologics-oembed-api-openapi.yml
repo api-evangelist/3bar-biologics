@@ -1,0 +1,139 @@
+openapi: 3.1.0
+info:
+  title: 3Bar Biologics oEmbed API
+  version: wp/v2
+  description: Public oEmbed 1.0 provider endpoint for 3barbiologics.com URLs, returning embeddable rich
+    metadata — provider, author, title, thumbnail and iframe HTML — for any post or page on the site.
+    This is the one endpoint on the surface that implements a published third-party interoperability standard
+    rather than a WordPress-internal convention.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas
+    (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: oEmbed
+  description: Public oEmbed 1.0 provider endpoint for 3barbiologics.com URLs, returning embeddable rich
+    metadata — provider, author, title, thumbnail and iframe HTML — for any post or page on the site.
+paths:
+  /oembed/1.0/embed:
+    get:
+      operationId: getOembed
+      summary: Get oEmbed data for a 3barbiologics.com URL
+      description: oEmbed 1.0 provider endpoint. Returns embeddable rich metadata — provider, author,
+        title, thumbnail and iframe HTML — for any post or page URL on 3barbiologics.com. Verified live
+        on 2026-09-05 against https://www.3barbiologics.com/why-3bar/.
+      tags:
+      - oEmbed
+      parameters:
+      - name: format
+        in: query
+        required: false
+        description: WordPress `format` query parameter, declared by the server's own OPTIONS document.
+        schema:
+          default: json
+      - name: maxwidth
+        in: query
+        required: false
+        description: WordPress `maxwidth` query parameter, declared by the server's own OPTIONS document.
+        schema:
+          default: 600
+      - name: url
+        in: query
+        required: true
+        description: The URL of the resource for which to fetch oEmbed data.
+        schema:
+          type: string
+          format: uri
+      responses:
+        '200':
+          description: oEmbed metadata for the requested URL.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                description: An oEmbed 1.0 rich-type response.
+                properties:
+                  version:
+                    type: string
+                    description: oEmbed version. `1.0`.
+                  provider_name:
+                    type: string
+                    description: '`3BarBio` at capture.'
+                  provider_url:
+                    type: string
+                    format: uri
+                  author_name:
+                    type: string
+                  author_url:
+                    type: string
+                    format: uri
+                  title:
+                    type: string
+                  type:
+                    type: string
+                    description: '`rich` for site content.'
+                  width:
+                    type: integer
+                  height:
+                    type:
+                    - integer
+                    - 'null'
+                  html:
+                    type: string
+                    description: The iframe embed markup.
+        '404':
+          description: '`oembed_invalid_url` — the URL is not a resolvable resource on this site.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not
+        stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message

@@ -1,0 +1,122 @@
+generated: '2026-09-05'
+method: derived
+source: openapi/ (schemas published by the server at HTTP OPTIONS) + live records
+description: >-
+  The entity-relationship graph behind the 3barbiologics.com content API, derived from the JSON
+  Schemas the server publishes for each route and from the `_links` relations present on live
+  records. This is WordPress's core content model as it is actually populated on this site — no
+  3Bar-specific custom post type or custom taxonomy is registered, so the model carries no
+  domain-specific entities such as products, formulations, batches or customers.
+identifiers:
+  scheme: integer
+  detail: >-
+    Every entity is keyed by an unprefixed auto-increment integer. There are no type-prefixed ids,
+    so an id is meaningless without knowing which collection it came from — id 8 is simultaneously a
+    valid category and a valid user on this site.
+  slugs: >-
+    Every entity also carries a URL-safe `slug`, unique within its collection, and most collections
+    accept `?slug=` as a filter. Slugs are the stable human-readable handle; prefer them over
+    integers for anything you persist.
+entities:
+- name: Post
+  rest_base: posts
+  count_at_capture: 51
+  schema_properties: 27
+  description: A news item, press release or technical insight in the 3BarBio archive.
+  key_fields: [id, date, slug, status, link, title, content, excerpt, author, featured_media, categories, tags]
+  relationships:
+  - {type: belongs_to, target: User, via: author, detail: 'Integer user id; embeddable via _embed as author.'}
+  - {type: belongs_to, target: MediaItem, via: featured_media, detail: 'Integer attachment id, 0 when unset.'}
+  - {type: has_many, target: Category, via: categories, detail: 'Array of category term ids.'}
+  - {type: has_many, target: Tag, via: tags, detail: 'Array of tag term ids.'}
+- name: Page
+  rest_base: pages
+  count_at_capture: 14
+  schema_properties: 25
+  description: A static marketing or policy page.
+  key_fields: [id, date, slug, status, link, title, content, excerpt, author, featured_media, parent, menu_order]
+  relationships:
+  - {type: belongs_to, target: User, via: author}
+  - {type: belongs_to, target: MediaItem, via: featured_media}
+  - {type: belongs_to, target: Page, via: parent, detail: 'Self-referential hierarchy; 0 at the root. All 14 pages are flat at capture.'}
+- name: MediaItem
+  rest_base: media
+  count_at_capture: 560
+  schema_properties: 33
+  description: >-
+    An uploaded attachment with its generated size variants. The count is the server's advertised
+    X-WP-Total and is NOT what an anonymous caller can retrieve — see
+    errors/3bar-biologics-problem-types.yml#media-total-vs-returned.
+  key_fields: [id, date, slug, link, title, author, media_type, mime_type, source_url, media_details, post]
+  relationships:
+  - {type: belongs_to, target: User, via: author}
+  - {type: belongs_to, target: Post, via: post, detail: 'The post or page this attachment was uploaded to; null when unattached.'}
+- name: Category
+  rest_base: categories
+  count_at_capture: 5
+  schema_properties: 9
+  description: >-
+    A hierarchical classification term. Populated at capture with In the News (22 posts), Insights
+    (19), Press Release (19), News (15) and Uncategorized (4).
+  key_fields: [id, count, name, slug, parent, link, taxonomy]
+  relationships:
+  - {type: has_many, target: Post, via: 'reverse of Post.categories', detail: 'Query as GET /wp/v2/posts?categories=<id>.'}
+  - {type: belongs_to, target: Category, via: parent, detail: 'Self-referential hierarchy; all 5 are flat at capture.'}
+- name: Tag
+  rest_base: tags
+  count_at_capture: 3
+  schema_properties: 8
+  description: >-
+    A flat classification term. Populated at capture with Biologicals, Microbes and N-Fixing — each
+    applied to exactly one post, so the tag vocabulary is effectively unused.
+  key_fields: [id, count, name, slug, link, taxonomy]
+  relationships:
+  - {type: has_many, target: Post, via: 'reverse of Post.tags', detail: 'Query as GET /wp/v2/posts?tags=<id>.'}
+- name: User
+  rest_base: users
+  count_at_capture: 3
+  schema_properties: 20
+  description: >-
+    A public author record. Three at capture. Only users who have authored a published post are
+    exposed anonymously.
+  key_fields: [id, name, slug, link, description, avatar_urls]
+  relationships:
+  - {type: has_many, target: Post, via: 'reverse of Post.author', detail: 'Query as GET /wp/v2/posts?author=<id>.'}
+  - {type: has_many, target: MediaItem, via: 'reverse of MediaItem.author'}
+- name: SearchResult
+  rest_base: search
+  schema_properties: 5
+  description: >-
+    A lightweight projection over Post and Page, not a stored entity. Returns id, title, url, type
+    and subtype only.
+  key_fields: [id, title, url, type, subtype]
+  relationships:
+  - {type: belongs_to, target: Post, via: 'id + subtype', detail: 'Resolve by fetching /wp/v2/<subtype>/<id> for the full record.'}
+  - {type: belongs_to, target: Page, via: 'id + subtype'}
+- name: Type
+  rest_base: types
+  count_at_capture: 14
+  description: >-
+    Registry metadata describing a registered post type. 14 registered; only post, page and
+    attachment are publicly readable, the rest are WordPress core and Elementor plugin internals.
+- name: Taxonomy
+  rest_base: taxonomies
+  description: Registry metadata describing a registered taxonomy. category and post_tag are the public ones.
+- name: Status
+  rest_base: statuses
+  description: Registry metadata describing a publication status — the vocabulary the `status` query parameter accepts.
+link_relations:
+  detail: >-
+    Every record carries a `_links` object with HAL-style relations (self, collection, about, author,
+    replies, wp:featuredmedia, wp:attachment, wp:term). Passing `_embed` inlines the targets of the
+    embeddable relations under `_embedded`, which collapses the author / featured-media / term
+    lookups into the same request and is the single most useful optimisation on this surface.
+absent_domain_entities:
+  detail: >-
+    Worth stating explicitly, because it is the finding a reader most needs. This model contains no
+    entity representing anything 3Bar Biologics actually does. There is no product, formulation,
+    strain, batch, lot, shipment, viability test, packaging configuration or customer entity. No
+    custom post type and no custom taxonomy is registered on the site. LiveMicrobe, Iso-Pak and
+    Re-Pak exist here only as words inside the `content.rendered` HTML of ordinary pages. Anyone
+    hoping to read 3Bar's agricultural biologicals data through this API will find only the company's
+    website.

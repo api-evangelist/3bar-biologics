@@ -1,0 +1,63 @@
+generated: '2026-09-05'
+method: probed
+source: https://www.3barbiologics.com/wp-json/
+docs: https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+description: >-
+  3Bar Biologics publishes no developer program and issues no API credentials. The WordPress REST
+  content API behind www.3barbiologics.com is anonymously readable — no key, token, signature or
+  account is required to read posts, pages, media, taxonomies, users, search or the discovery
+  metadata. The server declares exactly one authentication method in its own root document,
+  WordPress application passwords, and that method gates only the write and privileged-read
+  operations that are not part of the public surface. There is no public issuance path for that
+  credential, so it is a staff credential rather than a developer credential.
+summary:
+  types: []
+  anonymous_read: true
+  credentialed_write: true
+  api_key_in: []
+  oauth2_flows: []
+  note: >-
+    No securityScheme appears in any of the nine derived OpenAPI documents because the public
+    surface genuinely has none. This is a recorded absence, not a gap in harvesting.
+schemes: []
+declared_by_server:
+- name: application-passwords
+  type: http
+  scheme: basic
+  description: >-
+    WordPress application passwords (RFC 7617 Basic over TLS: WordPress username plus a generated
+    application password). Declared in the `authentication` block of the API root document.
+    Required for every write method and for privileged reads such as GET /wp/v2/settings,
+    /wp/v2/plugins, /wp/v2/themes and /wp/v2/menus. Credentials are issued per WordPress user from
+    the site admin — there is no public registration path.
+  authorization_endpoint: https://www.3barbiologics.com/wp-admin/authorize-application.php
+  source: https://www.3barbiologics.com/wp-json/
+anonymous_denials_observed:
+- url: https://www.3barbiologics.com/wp-json/wp/v2/settings
+  http_status: 401
+  body: '{"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}'
+- url: https://www.3barbiologics.com/wp-json/wp/v2/plugins
+  http_status: 401
+  body: '{"code":"rest_cannot_view_plugins","message":"Sorry, you are not allowed to manage plugins for this site.","data":{"status":401}}'
+- url: https://www.3barbiologics.com/wp-json/wp/v2/themes
+  http_status: 401
+  body: '{"code":"rest_cannot_view_themes","message":"Sorry, you are not allowed to view themes.","data":{"status":401}}'
+- url: https://www.3barbiologics.com/wp-json/wp/v2/menus
+  http_status: 401
+  body: '{"code":"rest_cannot_view","message":"Sorry, you are not allowed to view menus.","data":{"status":401}}'
+- url: https://www.3barbiologics.com/wp-json/wp/v2/elementor_library?per_page=1
+  http_status: 401
+  body: '{"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}'
+evidence:
+- url: https://www.3barbiologics.com/wp-json/
+  http_status: 200
+  finding: 'authentication: {"application-passwords": {"endpoints": {"authorization": "https://www.3barbiologics.com/wp-admin/authorize-application.php"}}}'
+- url: https://www.3barbiologics.com/wp-json/wp/v2/posts?per_page=1
+  http_status: 200
+  finding: 'Anonymous read succeeds; response carries `Allow: GET`, confirming read-only anonymous access.'
+- url: https://www.3barbiologics.com/wp-json/wp/v2/settings
+  http_status: 401
+  finding: Privileged read denied anonymously, confirming the public/private boundary.
+x-evidence:
+  fetched: '2026-09-05'
+  probes: 8

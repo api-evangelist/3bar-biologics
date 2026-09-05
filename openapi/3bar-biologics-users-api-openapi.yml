@@ -1,0 +1,418 @@
+openapi: 3.1.0
+info:
+  title: 3Bar Biologics Users API
+  version: wp/v2
+  description: Public, unauthenticated read access to the public author records behind the 3BarBio news
+    archive. Verified live on 2026-09-05 at 3 authors.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas
+    (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: Users
+  description: Public, unauthenticated read access to the public author records behind the 3BarBio news
+    archive.
+paths:
+  /wp/v2/users:
+    get:
+      operationId: listUsers
+      summary: List users
+      description: Returns a page of users records. Anonymous; no credential required. Pagination is page-number
+        based; totals are returned in the X-WP-Total and X-WP-TotalPages response headers, both of which
+        are listed in Access-Control-Expose-Headers and are therefore readable from a browser.
+      tags:
+      - Users
+      parameters:
+      - name: capabilities
+        in: query
+        required: false
+        description: Limit result set to users matching at least one specific capability provided. Accepts
+          csv list or single capability.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        required: false
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: has_published_posts
+        in: query
+        required: false
+        description: Limit result set to users who have published posts.
+        schema:
+          type:
+          - boolean
+          - array
+          items:
+            type: string
+            enum:
+              post: post
+              page: page
+              attachment: attachment
+              nav_menu_item: nav_menu_item
+              wp_block: wp_block
+              wp_template: wp_template
+              wp_template_part: wp_template_part
+              wp_global_styles: wp_global_styles
+              wp_navigation: wp_navigation
+              wp_font_family: wp_font_family
+              wp_font_face: wp_font_face
+              e-floating-buttons: e-floating-buttons
+              elementor_library: elementor_library
+              elementor_snippet: elementor_snippet
+      - name: include
+        in: query
+        required: false
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: offset
+        in: query
+        required: false
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        required: false
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: orderby
+        in: query
+        required: false
+        description: Sort collection by user attribute.
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - registered_date
+          - slug
+          - include_slugs
+          - email
+          - url
+          default: name
+      - name: page
+        in: query
+        required: false
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        required: false
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      - name: roles
+        in: query
+        required: false
+        description: Limit result set to users matching at least one specific role provided. Accepts csv
+          list or single role.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: search
+        in: query
+        required: false
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: search_columns
+        in: query
+        required: false
+        description: Array of column names to be searched.
+        schema:
+          type: array
+          default: []
+          items:
+            enum:
+            - email
+            - name
+            - id
+            - username
+            - slug
+            type: string
+      - name: slug
+        in: query
+        required: false
+        description: Limit result set to users with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: who
+        in: query
+        required: false
+        description: Limit result set to users who are considered authors.
+        schema:
+          type: string
+          enum:
+          - authors
+      responses:
+        '200':
+          description: A page of users records. 3 records existed at capture on 2026-09-05.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: '`rest_invalid_param` — a query parameter failed validation; `data.params` names
+            the offending parameter and the constraint it violated. Returned for example when `per_page`
+            is outside 1..100 or `page` exceeds the available page count.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/users/{id}:
+    get:
+      operationId: getUser
+      summary: Get a single user by id
+      description: Returns one user record. A 404 is returned both when the id does not exist and when
+        the object exists but is not publicly readable, so a 404 does not prove non-existence.
+      tags:
+      - Users
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique numeric identifier for the user.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines which fields are present. `edit`
+          requires authentication and returns 401 anonymously.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: _fields
+        in: query
+        required: false
+        description: Comma-separated allowlist of top-level response fields — a genuine sparse-fieldset
+          control.
+        schema:
+          type: string
+      - name: _embed
+        in: query
+        required: false
+        description: Inline embeddable linked resources (author, featured media, terms) under `_embedded`.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested user record.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: '`rest_post_invalid_id` (or the resource-specific equivalent) — the id did not
+            resolve to a readable object.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the user.
+          type: integer
+        username:
+          description: Login name for the user.
+          type: string
+        name:
+          description: Display name for the user.
+          type: string
+        first_name:
+          description: First name for the user.
+          type: string
+        last_name:
+          description: Last name for the user.
+          type: string
+        email:
+          description: The email address for the user.
+          type: string
+          format: email
+        url:
+          description: URL of the user.
+          type: string
+          format: uri
+        description:
+          description: Description of the user.
+          type: string
+        link:
+          description: Author URL of the user.
+          type: string
+          format: uri
+        locale:
+          description: Locale for the user.
+          type: string
+          enum:
+          - ''
+          - en_US
+        nickname:
+          description: The nickname for the user.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the user.
+          type: string
+        registered_date:
+          description: Registration date for the user.
+          type: string
+          format: date-time
+        roles:
+          description: Roles assigned to the user.
+          type: array
+          items:
+            type: string
+        password:
+          description: Password for the user (never included).
+          type: string
+        capabilities:
+          description: All capabilities assigned to the user.
+          type: object
+        extra_capabilities:
+          description: Any extra capabilities assigned to the user.
+          type: object
+        avatar_urls:
+          description: Avatar URLs for the user.
+          type: object
+          properties:
+            '24':
+              description: Avatar URL with image size of 24 pixels.
+              type: string
+              format: uri
+            '48':
+              description: Avatar URL with image size of 48 pixels.
+              type: string
+              format: uri
+            '96':
+              description: Avatar URL with image size of 96 pixels.
+              type: string
+              format: uri
+        meta:
+          description: Meta fields.
+          type: object
+          properties:
+            persisted_preferences:
+              type: object
+              description: ''
+              default: []
+              properties:
+                _modified:
+                  description: The date and time the preferences were updated.
+                  type: string
+                  format: date-time
+              additionalProperties: true
+        elementor_introduction:
+          description: Elementor user meta data
+          type: object
+          properties:
+            ai_get_started:
+              type: boolean
+          additionalProperties: true
+      description: A WordPress `user` record, exactly as the server publishes its schema at OPTIONS https://www.3barbiologics.com/wp-json/wp/v2/users.
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not
+        stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message

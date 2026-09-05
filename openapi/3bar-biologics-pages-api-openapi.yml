@@ -1,0 +1,609 @@
+openapi: 3.1.0
+info:
+  title: 3Bar Biologics Pages API
+  version: wp/v2
+  description: Public, unauthenticated read access to the static marketing and policy pages of 3barbiologics.com
+    — Why 3Bar?, Innovative Biomanufacturing, Design/Develop/Deliver, LiveMicrobe Products, Case Studies,
+    News, Insights, Careers, Contact Us and Privacy Policy. Verified live on 2026-09-05 at 14 published
+    pages.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas
+    (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: Pages
+  description: Public, unauthenticated read access to the static marketing and policy pages of 3barbiologics.com
+    — Why 3Bar?, Innovative Biomanufacturing, Design/Develop/Deliver, LiveMicrobe Products, Case Studies,
+    News, Insights, Careers, Contact Us and Privacy Policy.
+paths:
+  /wp/v2/pages:
+    get:
+      operationId: listPages
+      summary: List pages
+      description: Returns a page of pages records. Anonymous; no credential required. Pagination is page-number
+        based; totals are returned in the X-WP-Total and X-WP-TotalPages response headers, both of which
+        are listed in Access-Control-Expose-Headers and are therefore readable from a browser.
+      tags:
+      - Pages
+      parameters:
+      - name: after
+        in: query
+        required: false
+        description: Limit response to posts published after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: author
+        in: query
+        required: false
+        description: Limit result set to posts assigned to specific authors.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: author_exclude
+        in: query
+        required: false
+        description: Ensure result set excludes posts assigned to specific authors.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: before
+        in: query
+        required: false
+        description: Limit response to posts published before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        required: false
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: include
+        in: query
+        required: false
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: menu_order
+        in: query
+        required: false
+        description: Limit result set to posts with a specific menu_order value.
+        schema:
+          type: integer
+      - name: modified_after
+        in: query
+        required: false
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: modified_before
+        in: query
+        required: false
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: offset
+        in: query
+        required: false
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        required: false
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: orderby
+        in: query
+        required: false
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          - menu_order
+          default: date
+      - name: page
+        in: query
+        required: false
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: parent
+        in: query
+        required: false
+        description: Limit result set to items with particular parent IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: parent_exclude
+        in: query
+        required: false
+        description: Limit result set to all items except those of a particular parent ID.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      - name: search
+        in: query
+        required: false
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: search_columns
+        in: query
+        required: false
+        description: Array of column names to be searched.
+        schema:
+          type: array
+          default: []
+          items:
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+            type: string
+      - name: search_semantics
+        in: query
+        required: false
+        description: How to interpret the search input.
+        schema:
+          type: string
+          enum:
+          - exact
+      - name: slug
+        in: query
+        required: false
+        description: Limit result set to posts with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: status
+        in: query
+        required: false
+        description: Limit result set to posts assigned one or more statuses.
+        schema:
+          type: array
+          default: publish
+          items:
+            enum:
+            - publish
+            - future
+            - draft
+            - pending
+            - private
+            - trash
+            - auto-draft
+            - inherit
+            - request-pending
+            - request-confirmed
+            - request-failed
+            - request-completed
+            - any
+            type: string
+      responses:
+        '200':
+          description: A page of pages records. 14 records existed at capture on 2026-09-05.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Page'
+        '400':
+          description: '`rest_invalid_param` — a query parameter failed validation; `data.params` names
+            the offending parameter and the constraint it violated. Returned for example when `per_page`
+            is outside 1..100 or `page` exceeds the available page count.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/pages/{id}:
+    get:
+      operationId: getPage
+      summary: Get a single page by id
+      description: Returns one page record. A 404 is returned both when the id does not exist and when
+        the object exists but is not publicly readable, so a 404 does not prove non-existence.
+      tags:
+      - Pages
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique numeric identifier for the page.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines which fields are present. `edit`
+          requires authentication and returns 401 anonymously.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: _fields
+        in: query
+        required: false
+        description: Comma-separated allowlist of top-level response fields — a genuine sparse-fieldset
+          control.
+        schema:
+          type: string
+      - name: _embed
+        in: query
+        required: false
+        description: Inline embeddable linked resources (author, featured media, terms) under `_embedded`.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested page record.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '404':
+          description: '`rest_post_invalid_id` (or the resource-specific equivalent) — the id did not
+            resolve to a readable object.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Page:
+      type: object
+      properties:
+        date:
+          description: The date the post was published, in the site's timezone.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        date_gmt:
+          description: The date the post was published, as GMT.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        guid:
+          description: The globally unique identifier for the post.
+          type: object
+          properties:
+            raw:
+              description: GUID for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: GUID for the post, transformed for display.
+              type: string
+        id:
+          description: Unique identifier for the post.
+          type: integer
+        link:
+          description: URL to the post.
+          type: string
+          format: uri
+        modified:
+          description: The date the post was last modified, in the site's timezone.
+          type: string
+          format: date-time
+        modified_gmt:
+          description: The date the post was last modified, as GMT.
+          type: string
+          format: date-time
+        slug:
+          description: An alphanumeric identifier for the post unique to its type.
+          type: string
+        status:
+          description: A named status for the post.
+          type: string
+          enum:
+          - publish
+          - future
+          - draft
+          - pending
+          - private
+        type:
+          description: Type of post.
+          type: string
+        password:
+          description: A password to protect access to the content and excerpt.
+          type: string
+        permalink_template:
+          description: Permalink template for the post.
+          type: string
+        generated_slug:
+          description: Slug automatically generated from the post title.
+          type: string
+        class_list:
+          description: An array of the class names for the post container element.
+          type: array
+          items:
+            type: string
+        parent:
+          description: The ID for the parent of the post.
+          type: integer
+        title:
+          description: The title for the post.
+          type: object
+          properties:
+            raw:
+              description: Title for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML title for the post, transformed for display.
+              type: string
+        content:
+          description: The content for the post.
+          type: object
+          properties:
+            raw:
+              description: Content for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML content for the post, transformed for display.
+              type: string
+            block_version:
+              description: Version of the content block format used by the post.
+              type: integer
+            protected:
+              description: Whether the content is protected with a password.
+              type: boolean
+        author:
+          description: The ID for the author of the post.
+          type: integer
+        excerpt:
+          description: The excerpt for the post.
+          type: object
+          properties:
+            raw:
+              description: Excerpt for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML excerpt for the post, transformed for display.
+              type: string
+            protected:
+              description: Whether the excerpt is protected with a password.
+              type: boolean
+        featured_media:
+          description: The ID of the featured media for the post.
+          type: integer
+        comment_status:
+          description: Whether or not comments are open on the post.
+          type: string
+          enum:
+          - open
+          - closed
+        ping_status:
+          description: Whether or not the post can be pinged.
+          type: string
+          enum:
+          - open
+          - closed
+        menu_order:
+          description: The order of the post in relation to other posts.
+          type: integer
+        meta:
+          description: Meta fields.
+          type: object
+          properties:
+            content-type:
+              type: string
+              description: ''
+              default: ''
+            footnotes:
+              type: string
+              description: ''
+              default: ''
+            _elementor_edit_mode:
+              type: string
+              description: Elementor edit mode, `builder` is required for Elementor editing
+              default: ''
+              enum:
+              - ''
+              - builder
+            _elementor_template_type:
+              type: string
+              description: Elementor document type
+              default: ''
+              enum:
+              - post
+              - wp-post
+              - wp-page
+              - kit
+              - not-supported
+              - page
+              - section
+              - container
+              - floating-buttons
+              - e-div-block
+              - e-flexbox
+              - e-grid
+              - e-form
+              - cloud-template-preview
+              - elementor_component
+              - widget
+              - popup
+              - header
+              - footer
+              - single
+              - single-post
+              - single-page
+              - archive
+              - search-results
+              - error-404
+              - code_snippet
+              - loop-item
+              - ''
+            _elementor_data:
+              type: string
+              description: Elementor JSON as a string
+              default: ''
+            _elementor_page_settings:
+              type: object
+              description: Elementor page level settings
+              default: '{}'
+              properties:
+                hide_title:
+                  type: string
+                  enum:
+                  - 'yes'
+                  - 'no'
+                  default: ''
+              additionalProperties: true
+            _elementor_conditions:
+              type: array
+              description: Elementor conditions
+              default: []
+              additionalProperties: true
+        template:
+          description: The theme file to use to display the post.
+          type: string
+      links:
+      - rel: https://api.w.org/action-publish
+        title: The current user can publish this post.
+        href: https://www.3barbiologics.com/wp-json/wp/v2/pages/{id}
+        targetSchema:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - publish
+              - future
+      - rel: https://api.w.org/action-unfiltered-html
+        title: The current user can post unfiltered HTML markup and JavaScript.
+        href: https://www.3barbiologics.com/wp-json/wp/v2/pages/{id}
+        targetSchema:
+          type: object
+          properties:
+            content:
+              raw:
+                type: string
+      - rel: https://api.w.org/action-assign-author
+        title: The current user can change the author on this post.
+        href: https://www.3barbiologics.com/wp-json/wp/v2/pages/{id}
+        targetSchema:
+          type: object
+          properties:
+            author:
+              type: integer
+      description: A WordPress `page` record, exactly as the server publishes its schema at OPTIONS https://www.3barbiologics.com/wp-json/wp/v2/pages.
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not
+        stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message

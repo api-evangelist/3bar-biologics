@@ -1,0 +1,107 @@
+openapi: 3.1.0
+info:
+  title: 3Bar Biologics SEO Metadata API
+  version: wp/v2
+  description: Public Yoast SEO head endpoint returning the rendered head metadata and its parsed schema.org
+    JSON-LD graph for any 3barbiologics.com URL — a structured-data view of every page that does not require
+    parsing HTML. Running Yoast SEO v28.1 at capture.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas
+    (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: SEO
+  description: Public Yoast SEO head endpoint returning the rendered head metadata and its parsed schema.org
+    JSON-LD graph for any 3barbiologics.com URL — a structured-data view of every page that does not require
+    parsing HTML.
+paths:
+  /yoast/v1/get_head:
+    get:
+      operationId: getSeoHead
+      summary: Get rendered SEO head metadata and its schema.org graph for a URL
+      description: Returns the rendered `<head>` metadata Yoast SEO emits for any 3barbiologics.com URL,
+        together with its parsed JSON-LD schema.org graph — a structured-data view of any page without
+        scraping the HTML. Verified live on 2026-09-05 against https://www.3barbiologics.com/why-3bar/
+        (Yoast SEO v28.1).
+      tags:
+      - SEO
+      parameters:
+      - name: url
+        in: query
+        required: true
+        description: The 3barbiologics.com URL to render head metadata for.
+        schema:
+          type: string
+          format: uri
+      responses:
+        '200':
+          description: The rendered head metadata for the requested URL.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Rendered head metadata plus its parsed structured-data graph.
+                properties:
+                  html:
+                    type: string
+                    description: The rendered `<head>` markup, including title, meta description, canonical,
+                      Open Graph, Twitter card and the JSON-LD script block.
+                  json:
+                    type: object
+                    description: The same metadata parsed into an object, including the schema.org `@graph`.
+        '404':
+          description: The URL did not resolve to an indexable object on this site.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not
+        stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message

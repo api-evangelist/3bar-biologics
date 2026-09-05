@@ -1,0 +1,107 @@
+generated: '2026-09-05'
+method: probed
+source: https://www.3barbiologics.com/wp-json/
+description: >-
+  3Bar Biologics publishes no versioning policy, no deprecation policy, no SLA, no changelog and no
+  status page for the content API behind www.3barbiologics.com. Everything below is what could be
+  observed on 2026-09-05; the absences are the finding, not a gap in harvesting.
+versioning:
+  scheme: uri-path namespace
+  current: wp/v2
+  namespaces_registered: 17
+  docs: null
+  detail: >-
+    The version is a path namespace inherited from WordPress core and its plugins, not a contract
+    3Bar Biologics maintains. It changes when the site is upgraded, on the site owner's schedule,
+    with no announcement channel. The 17 namespaces at capture were oembed/1.0, leadin/v1,
+    redirection/v1, yoast/v1, elementor-one/v1, elementor/v1, elementor-pro/v1, wp-smush/v1,
+    hub-connector/v1, elementor-hello-elementor/v1, elementor/v1/documents, elementor-ai/v1,
+    elementor/v1/feedback, wp/v2, wp-site-health/v1, wp-block-editor/v1 and wp-abilities/v1.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    No RFC 8594 Sunset or Deprecation header was observed on any response, and no deprecation policy
+    is published. A route can disappear when a plugin is deactivated — 13 of the 17 registered
+    namespaces are plugin-provided (Elementor, Yoast, Redirection, HubSpot/leadin, Smush) and carry
+    no stability commitment to third parties whatsoever. Only the wp/v2 and oembed/1.0 namespaces
+    are core.
+sla:
+  url: null
+  uptime_target: null
+status_page:
+  url: null
+  detail: >-
+    No status page exists. status.3barbiologics.com returns no A record, and no third-party status
+    host is linked from the site. No StatusPage pointer is emitted in apis.yml, because there is no
+    status page to point at.
+changelog:
+  url: null
+  detail: >-
+    No API changelog. The nearest dated public signal is the news archive at
+    www.3barbiologics.com/news-insights/ (51 posts, most recent 2026-08-18) and its RSS feed at
+    /feed/, which covers company news rather than API change. No ChangeLog pointer is emitted.
+support:
+  api_support_channel: null
+  general_contact: https://www.3barbiologics.com/contact-us/
+  detail: >-
+    The published contact route is a sales address (Sales@3BarBiologics.com) and a phone number
+    (1-877-3BAR-BIO). There is no developer or API support channel, no issue tracker and no
+    community forum.
+deprecated_operations: []
+known_defects:
+- id: media-order-asc-500
+  surface: GET /wp/v2/media
+  severity: high
+  first_observed: '2026-09-05'
+  summary: >-
+    Ascending sort on a numeric or date field returns HTTP 500 with an HTML body. Reproduced across
+    orderby=date, id and author, and via a bare order=asc. Posts and pages are unaffected.
+  artifact: errors/3bar-biologics-problem-types.yml
+- id: media-total-vs-returned
+  surface: GET /wp/v2/media
+  severity: high
+  first_observed: '2026-09-05'
+  summary: >-
+    X-WP-Total advertises 560 attachments while anonymous pages return 0-5 records with HTTP 200.
+    Fails silently; an empty 200 is indistinguishable from the end of the collection.
+  artifact: errors/3bar-biologics-problem-types.yml
+- id: careers-redirect-loop
+  surface: https://www.3barbiologics.com/careers/
+  severity: medium
+  first_observed: '2026-09-05'
+  summary: >-
+    The Careers page exists in the Pages API (id 134) but its public URL is an infinite redirect
+    loop: /careers/ 301s to /about-us/careers/, which 301s back to /careers/. curl aborts after 50
+    hops. The page is readable through the API and unreachable in a browser. No Careers pointer is
+    emitted in apis.yml as a result.
+- id: apex-tls-mismatch
+  surface: https://3barbiologics.com/
+  severity: high
+  first_observed: '2026-09-05'
+  summary: >-
+    The apex domain does not serve a valid certificate — see
+    security/3bar-biologics-domain-security.yml.
+stability_assessment:
+  grade: unmanaged
+  detail: >-
+    Consume defensively. This is a marketing site's CMS API with no versioning commitment, no
+    deprecation notice period, no status page, no changelog and no support channel, plus two
+    reproducible defects on one of its nine documented surfaces. The 19 documented operations that
+    sit in core wp/v2 and oembed/1.0 are the most stable; the yoast/v1 SEO endpoint is
+    plugin-provided and will disappear if that plugin is replaced. Nothing here is offered to third
+    parties as a product, and no commitment is made to anyone consuming it.
+evidence:
+- url: https://www.3barbiologics.com/wp-json/
+  http_status: 200
+  finding: 360 routes across 17 namespaces; no versioning or deprecation metadata.
+- host: status.3barbiologics.com
+  dns: NOERROR/NODATA — no A record
+  finding: No status page host.
+- url: https://www.3barbiologics.com/wp-json/wp/v2/posts?per_page=1
+  http_status: 200
+  finding: No Sunset or Deprecation response header.
+- url: https://www.3barbiologics.com/careers/
+  http_status: 301
+  finding: 'Redirect loop: /careers/ -> /about-us/careers/ -> /careers/.'

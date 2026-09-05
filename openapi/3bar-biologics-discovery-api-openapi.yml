@@ -1,0 +1,424 @@
+openapi: 3.1.0
+info:
+  title: 3Bar Biologics Discovery API
+  version: wp/v2
+  description: Public, unauthenticated discovery metadata for 3barbiologics.com — the self-describing
+    route index (360 routes across 17 namespaces at capture), the registered content types and taxonomies,
+    and the publication statuses. This is the surface that makes the rest of the API machine-readable
+    in the complete absence of any published documentation, and it is what every OpenAPI in this repository
+    was derived from.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas
+    (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: Discovery
+  description: Public, unauthenticated discovery metadata for 3barbiologics.com — the self-describing
+    route index (360 routes across 17 namespaces at capture), the registered content types and taxonomies,
+    and the publication statuses.
+paths:
+  /wp/v2/types:
+    get:
+      operationId: listTypes
+      summary: List registered content types
+      description: Returns every registered post type with its rest_base, capabilities and published JSON
+        Schema link. 14 types were registered at capture; `post`, `page` and `attachment` are the publicly
+        readable ones, the remainder are WordPress core and Elementor plugin internals.
+      tags:
+      - Discovery
+      parameters:
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: The registered records, keyed by slug.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Type'
+                description: A map keyed by slug.
+  /wp/v2/taxonomies:
+    get:
+      operationId: listTaxonomies
+      summary: List registered taxonomies
+      description: Returns every registered taxonomy with the post types it applies to. `category` and
+        `post_tag` are the publicly readable ones.
+      tags:
+      - Discovery
+      parameters:
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: type
+        in: query
+        required: false
+        description: Limit results to taxonomies associated with a specific post type.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The registered records, keyed by slug.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Taxonomy'
+                description: A map keyed by slug.
+  /wp/v2/statuses:
+    get:
+      operationId: listStatuses
+      summary: List registered publication statuses
+      description: Returns every registered publication status and whether it is public and queryable
+        — the vocabulary the `status` query parameter accepts.
+      tags:
+      - Discovery
+      parameters:
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: The registered records, keyed by slug.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Status'
+                description: A map keyed by slug.
+  /:
+    get:
+      operationId: getApiRoot
+      summary: Get the self-describing API root
+      description: 'Returns the site''s own API index: name, description, URL, the registered namespaces,
+        the declared authentication methods, and the full route table with per-route methods and argument
+        schemas. This is the document every OpenAPI in this repository was derived from — 360 routes across
+        17 namespaces at capture on 2026-09-05.'
+      tags:
+      - Discovery
+      parameters:
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - help
+          default: view
+      - name: namespace
+        in: query
+        required: false
+        description: Restrict the route table to a single namespace, e.g. `wp/v2`.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The self-describing API index.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The self-describing API index.
+                properties:
+                  name:
+                    type: string
+                    description: Site name. `3BarBio` at capture.
+                  description:
+                    type: string
+                    description: Site tagline.
+                  url:
+                    type: string
+                    format: uri
+                  home:
+                    type: string
+                    format: uri
+                  namespaces:
+                    type: array
+                    items:
+                      type: string
+                    description: Registered route namespaces.
+                  authentication:
+                    type: object
+                    description: Authentication methods the server declares it supports.
+                  routes:
+                    type: object
+                    description: The full route table, keyed by route pattern.
+components:
+  schemas:
+    Type:
+      type: object
+      properties:
+        capabilities:
+          description: All capabilities used by the post type.
+          type: object
+        description:
+          description: A human-readable description of the post type.
+          type: string
+        hierarchical:
+          description: Whether or not the post type should have children.
+          type: boolean
+        viewable:
+          description: Whether or not the post type can be viewed.
+          type: boolean
+        labels:
+          description: Human-readable labels for the post type for various contexts.
+          type: object
+        name:
+          description: The title for the post type.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the post type.
+          type: string
+        supports:
+          description: All features, supported by the post type.
+          type: object
+        has_archive:
+          description: If the value is a string, the value will be used as the archive slug. If the value
+            is false the post type has no archive.
+          type:
+          - string
+          - boolean
+        taxonomies:
+          description: Taxonomies associated with post type.
+          type: array
+          items:
+            type: string
+        rest_base:
+          description: REST base route for the post type.
+          type: string
+        rest_namespace:
+          description: REST route's namespace for the post type.
+          type: string
+        visibility:
+          description: The visibility settings for the post type.
+          type: object
+          properties:
+            show_ui:
+              description: Whether to generate a default UI for managing this post type.
+              type: boolean
+            show_in_nav_menus:
+              description: Whether to make the post type available for selection in navigation menus.
+              type: boolean
+        icon:
+          description: The icon for the post type.
+          type:
+          - string
+          - 'null'
+        template:
+          type:
+          - array
+          description: The block template associated with the post type.
+        template_lock:
+          type:
+          - string
+          - boolean
+          enum:
+          - all
+          - insert
+          - contentOnly
+          - false
+          description: The template_lock associated with the post type, or false if none.
+    Taxonomy:
+      type: object
+      properties:
+        capabilities:
+          description: All capabilities used by the taxonomy.
+          type: object
+        description:
+          description: A human-readable description of the taxonomy.
+          type: string
+        hierarchical:
+          description: Whether or not the taxonomy should have children.
+          type: boolean
+        labels:
+          description: Human-readable labels for the taxonomy for various contexts.
+          type: object
+        name:
+          description: The title for the taxonomy.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the taxonomy.
+          type: string
+        show_cloud:
+          description: Whether or not the term cloud should be displayed.
+          type: boolean
+        types:
+          description: Types associated with the taxonomy.
+          type: array
+          items:
+            type: string
+        rest_base:
+          description: REST base route for the taxonomy.
+          type: string
+        rest_namespace:
+          description: REST namespace route for the taxonomy.
+          type: string
+        visibility:
+          description: The visibility settings for the taxonomy.
+          type: object
+          properties:
+            public:
+              description: Whether a taxonomy is intended for use publicly either via the admin interface
+                or by front-end users.
+              type: boolean
+            publicly_queryable:
+              description: Whether the taxonomy is publicly queryable.
+              type: boolean
+            show_ui:
+              description: Whether to generate a default UI for managing this taxonomy.
+              type: boolean
+            show_admin_column:
+              description: Whether to allow automatic creation of taxonomy columns on associated post-types
+                table.
+              type: boolean
+            show_in_nav_menus:
+              description: Whether to make the taxonomy available for selection in navigation menus.
+              type: boolean
+            show_in_quick_edit:
+              description: Whether to show the taxonomy in the quick/bulk edit panel.
+              type: boolean
+    Status:
+      type: object
+      properties:
+        name:
+          description: The title for the status.
+          type: string
+        private:
+          description: Whether posts with this status should be private.
+          type: boolean
+        protected:
+          description: Whether posts with this status should be protected.
+          type: boolean
+        public:
+          description: Whether posts of this status should be shown in the front end of the site.
+          type: boolean
+        queryable:
+          description: Whether posts with this status should be publicly-queryable.
+          type: boolean
+        show_in_list:
+          description: Whether to include posts in the edit listing for their post type.
+          type: boolean
+        slug:
+          description: An alphanumeric identifier for the status.
+          type: string
+        date_floating:
+          description: Whether posts of this status may have floating published dates.
+          type: boolean
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not
+        stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message

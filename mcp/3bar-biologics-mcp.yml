@@ -1,0 +1,49 @@
+generated: '2026-09-05'
+method: derived
+source: openapi/ (operations derived from the live route index)
+status: candidate
+description: >-
+  3Bar Biologics ships no MCP server. This is a CANDIDATE tool list derived from the 19 operations
+  documented in openapi/, describing what an MCP server over this surface could expose if someone
+  built one. It is not a server, it is not reachable, and no MCPServer pointer is emitted in apis.yml.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: searched
+  detail: >-
+    No hosted or remote MCP endpoint, and no stdio package. Searched npm, PyPI and the GitHub API for
+    a first-party server and found nothing, and no MCP endpoint is advertised anywhere on
+    www.3barbiologics.com. `mode: none` records that nobody ships a server — neither an https URL an
+    agent could POST to today, nor an npx/pip package a human could install first. No endpoint URL is
+    guessed here.
+search_performed:
+- {target: 'www.3barbiologics.com', finding: 'No MCP endpoint advertised anywhere on the site.'}
+- {target: '/.well-known/ai-plugin.json', http_status: 404}
+- {target: '/.well-known/agent-card.json', http_status: 404, note: 'An agent card frequently points at an MCP endpoint; none was served.'}
+- {target: '/.well-known/oauth-protected-resource', http_status: 404}
+- {target: 'npm / PyPI / GitHub orgs', finding: 'No first-party package or repository exists — see packages/3bar-biologics-packages.yml.'}
+candidate_tools:
+- {name: list_posts, rest: listPosts, description: 'List 3BarBio news, press releases and insights. Supports search, category, tag, author and date filters.', consequence: read-only}
+- {name: get_post, rest: getPost, description: 'Fetch one news post by id, optionally with author, image and terms embedded.', consequence: read-only}
+- {name: list_pages, rest: listPages, description: 'List the 14 static marketing and policy pages.', consequence: read-only}
+- {name: get_page, rest: getPage, description: 'Fetch one page by id.', consequence: read-only}
+- {name: search_content, rest: searchContent, description: 'Cross-content search returning lightweight id/title/url/type/subtype records.', consequence: read-only}
+- {name: list_categories, rest: listCategories, description: 'List the 5 news categories with their post counts.', consequence: read-only}
+- {name: list_tags, rest: listTags, description: 'List the 3 post tags.', consequence: read-only}
+- {name: list_users, rest: listUsers, description: 'List the 3 public news authors.', consequence: read-only}
+- {name: list_media, rest: listMediaItems, description: 'List media attachments. WARNING: this collection has two reproducible defects — see errors/.', consequence: read-only, caution: true}
+- {name: get_seo_head, rest: getSeoHead, description: 'Get rendered head metadata and the schema.org JSON-LD graph for any site URL.', consequence: read-only}
+- {name: get_oembed, rest: getOembed, description: 'Get oEmbed rich metadata for a site URL.', consequence: read-only}
+- {name: get_api_root, rest: getApiRoot, description: 'Read the self-describing route index (360 routes, 17 namespaces).', consequence: read-only}
+notes:
+- >-
+  Every candidate tool is read-only, because the entire anonymously reachable surface is read-only.
+  An MCP server over this API would need no consent gate, no spend cap and no reversal path.
+- >-
+  No tool crosswalk artifact is emitted. A crosswalk binds real MCP tools (or GraphQL fields) to
+  backing REST operations so that MCP-only and REST-only capabilities are recorded; with no MCP
+  server and no GraphQL endpoint in existence, a crosswalk would map this derived list onto the
+  operations it was derived from, which measures nothing.

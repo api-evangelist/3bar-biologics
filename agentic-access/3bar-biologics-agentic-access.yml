@@ -1,0 +1,69 @@
+generated: '2026-09-05'
+method: generated
+source: openapi/ + authentication/ + conventions/
+description: >-
+  Recommended x-agentic-access contracts for the 3Bar Biologics public content API, classified per
+  operation. This is a RECOMMENDATION authored by API Evangelist, not a contract the provider
+  publishes — 3Bar Biologics makes no statement about agent access at all. The classification is
+  unusually simple here because the entire anonymously reachable surface is read-only.
+posture:
+  overall: safe-read-only
+  detail: >-
+    All 19 documented operations are GET. Every mutating route on the underlying WordPress install
+    returns 401 without a WordPress application password, and that credential has no public issuance
+    path, so no agent operating anonymously can change anything. An agent needs no consent gate, no
+    spend cap, no escalation path and no reversal plan for this surface.
+  robots_signal:
+    x_robots_tag: noindex
+    detail: >-
+      Every API response carries `X-Robots-Tag: noindex`. This is an indexing directive rather than an
+      access prohibition, and it is served on the API responses rather than in robots.txt, but it is
+      the only signal the provider gives about machine consumption of this data. An agent should read
+      freely and refrain from republishing the content as indexable material.
+  robots_txt:
+    url: https://www.3barbiologics.com/robots.txt
+    http_status: 200
+    detail: A Yoast-generated robots.txt is served. No /wp-json/ disallow was present.
+default_contract:
+  action_class: read
+  consequence: none
+  scope: public-content
+  token: none
+  escalation: not-required
+  reversible: na
+  rate_guidance: >-
+    No published limits and no rate-limit response headers. Self-throttle. Responses are cached for 7
+    days at the edge, so a cache-respecting agent generates almost no origin load.
+operations:
+- {operationId: listPosts, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getPost, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listPages, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getPage, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listCategories, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getCategory, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listTags, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getTag, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listUsers, action_class: read, consequence: none, token: none, escalation: not-required,
+   note: 'Returns named individuals (3 public authors). Personal data in the sense that it is attributable to a person, though it is published deliberately as bylines. Do not aggregate it into a contact dataset.'}
+- {operationId: getUser, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: searchContent, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listMediaItems, action_class: read, consequence: none, token: none, escalation: not-required,
+   reliability: degraded,
+   note: 'Two reproducible defects — HTTP 500 on ascending numeric/date sorts, and an advertised total that does not match retrievable records. An agent must not treat an empty 200 here as collection-exhausted. See errors/3bar-biologics-problem-types.yml.'}
+- {operationId: getMediaItem, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getApiRoot, action_class: read, consequence: none, token: none, escalation: not-required,
+   note: 'Roughly 340KB. Fetch once and cache; do not poll.'}
+- {operationId: listTypes, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listTaxonomies, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: listStatuses, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getOembed, action_class: read, consequence: none, token: none, escalation: not-required}
+- {operationId: getSeoHead, action_class: read, consequence: none, token: none, escalation: not-required,
+   note: 'Returns 404 with a populated, parseable body. Branch on status, not body shape.'}
+unreachable_write_surface:
+  detail: >-
+    The underlying WordPress install registers POST/PUT/PATCH/DELETE on posts, pages, media,
+    taxonomies, users, blocks, menus, widgets, templates and settings. None is reachable
+    anonymously — all return 401. They are listed here only so that a future re-profile does not
+    mistake their absence from the operations list above for an incomplete harvest.
+  credential_required: WordPress application password (Basic over TLS)
+  public_issuance_path: false

@@ -1,0 +1,32 @@
+generated: '2026-09-05'
+method: searched
+source: https://www.3barbiologics.com/
+plan_count: 0
+currency: null
+plans: []
+note: >-
+  3Bar Biologics publishes no pricing of any kind — not for the API, and not for its actual business
+  either. It is a contract development and manufacturing organization selling design, development,
+  biomanufacturing and fulfillment services to other companies, and those engagements are quoted
+  rather than listed. There is no pricing page on www.3barbiologics.com, no plans page, no
+  self-service signup and no commercial API product. The WordPress content API captured in this
+  repository is free and anonymous because it is incidental to the website, not because a free tier
+  was designed; it is not sold, metered or supported, and there is no paid tier above it. Recorded
+  as plan_count 0 with this explanation rather than omitted, so the zero reads as measured rather
+  than as unchecked.
+commercial_route:
+  self_service: false
+  contact_sales: https://www.3barbiologics.com/contact-us/
+  sales_email: Sales@3BarBiologics.com
+  sales_phone: 1-877-3BAR-BIO
+evidence:
+- url: https://www.3barbiologics.com/
+  http_status: 200
+  finding: No pricing or plans link in the site navigation or footer.
+- url: https://www.3barbiologics.com/wp-json/wp/v2/pages?per_page=100
+  http_status: 200
+  finding: >-
+    All 14 published pages enumerated via the Pages API; none is a pricing or plans page. The 14 are
+    livemicrobe-products, insights, develop-2, deliver-2, design, design-develop-deliver,
+    case-studies, news-insights, careers, why-3bar, innovative-biomanufacturing, contact-us, home
+    and privacy-policy.

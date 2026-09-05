@@ -1,0 +1,615 @@
+openapi: 3.1.0
+info:
+  title: 3Bar Biologics Media API
+  version: wp/v2
+  description: Public, unauthenticated read access to the media library behind 3barbiologics.com — product
+    and facility photography, LiveMicrobe packaging imagery and press assets with their generated size
+    variants. The server reports 560 attachments in X-WP-Total. Two live defects are recorded in this
+    document's x-observed-defects block and in errors/ and lifecycle/.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas
+    (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: Media
+  description: Public, unauthenticated read access to the media library behind 3barbiologics.com — product
+    and facility photography, LiveMicrobe packaging imagery and press assets with their generated size
+    variants.
+paths:
+  /wp/v2/media:
+    get:
+      operationId: listMediaItems
+      summary: List media
+      description: Returns a page of media records. Anonymous; no credential required. Pagination is page-number
+        based; totals are returned in the X-WP-Total and X-WP-TotalPages response headers, both of which
+        are listed in Access-Control-Expose-Headers and are therefore readable from a browser.
+      tags:
+      - Media
+      parameters:
+      - name: after
+        in: query
+        required: false
+        description: Limit response to posts published after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: author
+        in: query
+        required: false
+        description: Limit result set to posts assigned to specific authors.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: author_exclude
+        in: query
+        required: false
+        description: Ensure result set excludes posts assigned to specific authors.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: before
+        in: query
+        required: false
+        description: Limit response to posts published before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        required: false
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: include
+        in: query
+        required: false
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: media_type
+        in: query
+        required: false
+        description: Limit result set to attachments of a particular media type or media types.
+        schema:
+          type: array
+          default: null
+          items:
+            type: string
+            enum:
+            - image
+            - video
+            - text
+            - application
+            - audio
+      - name: mime_type
+        in: query
+        required: false
+        description: Limit result set to attachments of a particular MIME type or MIME types.
+        schema:
+          type: array
+          default: null
+          items:
+            type: string
+      - name: modified_after
+        in: query
+        required: false
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: modified_before
+        in: query
+        required: false
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: offset
+        in: query
+        required: false
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        required: false
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: orderby
+        in: query
+        required: false
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+      - name: page
+        in: query
+        required: false
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: parent
+        in: query
+        required: false
+        description: Limit result set to items with particular parent IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: parent_exclude
+        in: query
+        required: false
+        description: Limit result set to all items except those of a particular parent ID.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      - name: search
+        in: query
+        required: false
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: search_columns
+        in: query
+        required: false
+        description: Array of column names to be searched.
+        schema:
+          type: array
+          default: []
+          items:
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+            type: string
+      - name: search_semantics
+        in: query
+        required: false
+        description: How to interpret the search input.
+        schema:
+          type: string
+          enum:
+          - exact
+      - name: slug
+        in: query
+        required: false
+        description: Limit result set to posts with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: status
+        in: query
+        required: false
+        description: Limit result set to posts assigned one or more statuses.
+        schema:
+          type: array
+          default: inherit
+          items:
+            enum:
+            - inherit
+            - private
+            - trash
+            type: string
+      responses:
+        '200':
+          description: A page of media records. 560 records existed at capture on 2026-09-05.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaItem'
+        '400':
+          description: '`rest_invalid_param` — a query parameter failed validation; `data.params` names
+            the offending parameter and the constraint it violated. Returned for example when `per_page`
+            is outside 1..100 or `page` exceeds the available page count.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/media/{id}:
+    get:
+      operationId: getMediaItem
+      summary: Get a single media by id
+      description: Returns one media record. A 404 is returned both when the id does not exist and when
+        the object exists but is not publicly readable, so a 404 does not prove non-existence.
+      tags:
+      - Media
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique numeric identifier for the media.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines which fields are present. `edit`
+          requires authentication and returns 401 anonymously.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: _fields
+        in: query
+        required: false
+        description: Comma-separated allowlist of top-level response fields — a genuine sparse-fieldset
+          control.
+        schema:
+          type: string
+      - name: _embed
+        in: query
+        required: false
+        description: Inline embeddable linked resources (author, featured media, terms) under `_embedded`.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested media record.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaItem'
+        '404':
+          description: '`rest_post_invalid_id` (or the resource-specific equivalent) — the id did not
+            resolve to a readable object.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    MediaItem:
+      type: object
+      properties:
+        date:
+          description: The date the post was published, in the site's timezone.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        date_gmt:
+          description: The date the post was published, as GMT.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        guid:
+          description: The globally unique identifier for the post.
+          type: object
+          properties:
+            raw:
+              description: GUID for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: GUID for the post, transformed for display.
+              type: string
+        id:
+          description: Unique identifier for the post.
+          type: integer
+        link:
+          description: URL to the post.
+          type: string
+          format: uri
+        modified:
+          description: The date the post was last modified, in the site's timezone.
+          type: string
+          format: date-time
+        modified_gmt:
+          description: The date the post was last modified, as GMT.
+          type: string
+          format: date-time
+        slug:
+          description: An alphanumeric identifier for the post unique to its type.
+          type: string
+        status:
+          description: A named status for the post.
+          type: string
+          enum:
+          - publish
+          - future
+          - draft
+          - pending
+          - private
+        type:
+          description: Type of post.
+          type: string
+        permalink_template:
+          description: Permalink template for the post.
+          type: string
+        generated_slug:
+          description: Slug automatically generated from the post title.
+          type: string
+        class_list:
+          description: An array of the class names for the post container element.
+          type: array
+          items:
+            type: string
+        title:
+          description: The title for the post.
+          type: object
+          properties:
+            raw:
+              description: Title for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML title for the post, transformed for display.
+              type: string
+        author:
+          description: The ID for the author of the post.
+          type: integer
+        featured_media:
+          description: The ID of the featured media for the post.
+          type: integer
+        comment_status:
+          description: Whether or not comments are open on the post.
+          type: string
+          enum:
+          - open
+          - closed
+        ping_status:
+          description: Whether or not the post can be pinged.
+          type: string
+          enum:
+          - open
+          - closed
+        meta:
+          description: Meta fields.
+          type: object
+          properties:
+            content-type:
+              type: string
+              description: ''
+              default: ''
+        template:
+          description: The theme file to use to display the post.
+          type: string
+        smush:
+          description: Smush data.
+          type: string
+        alt_text:
+          description: Alternative text to display when attachment is not displayed.
+          type: string
+        caption:
+          description: The attachment caption.
+          type: object
+          properties:
+            raw:
+              description: Caption for the attachment, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML caption for the attachment, transformed for display.
+              type: string
+        description:
+          description: The attachment description.
+          type: object
+          properties:
+            raw:
+              description: Description for the attachment, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML description for the attachment, transformed for display.
+              type: string
+        media_type:
+          description: Attachment type.
+          type: string
+          enum:
+          - image
+          - file
+        mime_type:
+          description: The attachment MIME type.
+          type: string
+        media_details:
+          description: Details about the media file, specific to its type.
+          type: object
+        post:
+          description: The ID for the associated post of the attachment.
+          type: integer
+        source_url:
+          description: URL to the original attachment file.
+          type: string
+          format: uri
+        missing_image_sizes:
+          description: List of the missing image sizes of the attachment.
+          type: array
+          items:
+            type: string
+        filename:
+          description: Original attachment file name.
+          type: string
+        filesize:
+          description: Attachment file size in bytes.
+          type: integer
+        exif_orientation:
+          description: EXIF orientation value. Values 1-8 follow the EXIF specification, where 1 means
+            no rotation needed.
+          type: integer
+      links:
+      - rel: https://api.w.org/action-unfiltered-html
+        title: The current user can post unfiltered HTML markup and JavaScript.
+        href: https://www.3barbiologics.com/wp-json/wp/v2/media/{id}
+        targetSchema:
+          type: object
+          properties:
+            content:
+              raw:
+                type: string
+      - rel: https://api.w.org/action-assign-author
+        title: The current user can change the author on this post.
+        href: https://www.3barbiologics.com/wp-json/wp/v2/media/{id}
+        targetSchema:
+          type: object
+          properties:
+            author:
+              type: integer
+      description: A WordPress `attachment` record, exactly as the server publishes its schema at OPTIONS
+        https://www.3barbiologics.com/wp-json/wp/v2/media.
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not
+        stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message
+x-observed-defects:
+- id: media-order-asc-500
+  summary: GET /wp/v2/media returns HTTP 500 whenever order=asc is combined with a numeric or date sort
+    field.
+  detail: Reproduced 2026-09-05. orderby=date|id|author combined with order=asc returns a 500 HTML error
+    page rather than a JSON error envelope. orderby=title and orderby=slug with order=asc succeed, and
+    order=desc succeeds for every declared orderby value. The identical requests against /wp/v2/posts
+    and /wp/v2/pages all return 200, so the fault is specific to the media collection on this deployment
+    and is not WordPress core behaviour.
+  evidence:
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?orderby=date&order=asc&per_page=3
+    http_status: 500
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?orderby=id&order=asc&per_page=3
+    http_status: 500
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?order=asc&per_page=3
+    http_status: 500
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?orderby=title&order=asc&per_page=3
+    http_status: 200
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?orderby=date&order=desc&per_page=3
+    http_status: 200
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/posts?order=asc&per_page=3
+    http_status: 200
+  consumer_impact: An agent cannot page the media library oldest-first. Ascending traversal is the natural
+    way to take a stable, complete snapshot of an append-mostly collection, so this removes the only ordering
+    that is safe to resume.
+- id: media-total-vs-returned
+  summary: X-WP-Total reports 560 attachments but anonymous pages return far fewer records than per_page
+    requests.
+  detail: 'Reproduced 2026-09-05. The counter header is computed before the per-record read filter is
+    applied, so the advertised total does not match what an anonymous caller can actually retrieve: per_page=1
+    and per_page=5 both returned 0 records with HTTP 200, per_page=10 returned 2, and page=2 returned
+    5 — all against X-WP-Total 560 and X-WP-TotalPages 56.'
+  evidence:
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?per_page=1
+    http_status: 200
+    returned: 0
+    x_wp_total: 560
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?per_page=5
+    http_status: 200
+    returned: 0
+    x_wp_total: 560
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?per_page=10
+    http_status: 200
+    returned: 2
+    x_wp_total: 560
+  - url: https://www.3barbiologics.com/wp-json/wp/v2/media?page=2
+    http_status: 200
+    returned: 5
+    x_wp_total: 560
+  consumer_impact: An empty 200 is indistinguishable from the end of a collection. A client that stops
+    paging on the first empty page terminates immediately and silently believes the media library is empty,
+    while a client that trusts X-WP-TotalPages pages 56 times for a fraction of the advertised records.

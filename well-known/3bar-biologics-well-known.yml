@@ -1,0 +1,55 @@
+generated: '2026-09-05'
+method: probed
+source: direct HTTPS probes of the named /.well-known/ paths
+description: >-
+  Well-known discovery documents probed on every host this record knows. Every path returned 404 on
+  the one reachable host, and the apex domain could not be reached over HTTPS at all. No WellKnown,
+  SecurityTxt or AgentCard pointer is emitted in apis.yml, because a recorded absence is not a
+  presence — this file documents that 3Bar Biologics serves none of these documents.
+hosts:
+- host: www.3barbiologics.com
+  note: >-
+    The registrable domain's www host, the site host and the API baseURL host are all this one host.
+    Every 404 returned the site's HTML 404 page (text/html), not a document.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 404, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 404, file: null}
+  - {path: /.well-known/api-catalog, status: 404, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+  - {path: /.well-known/agent-card.json, status: 404, file: null}
+  - {path: /.well-known/agent.json, status: 404, file: null}
+  - {path: /.well-known/aauth-resource.json, status: 404, file: null}
+- host: 3barbiologics.com
+  note: >-
+    The apex domain resolves to Pantheon (23.185.0.2) but presents a certificate for
+    CN=pantheonsite.io whose SANs do not cover this name, so no HTTPS request completes — the TLS
+    handshake fails before any path is requested. Recorded as a connection failure rather than as a
+    404, because the distinction matters: these documents were not found absent here, they were
+    unreachable. See security/3bar-biologics-domain-security.yml.
+  documents:
+  - {path: /.well-known/security.txt, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/openid-configuration, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/oauth-authorization-server, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/oauth-protected-resource, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/api-catalog, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/ai-plugin.json, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/agent-card.json, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/agent.json, status: 0, file: null, error: tls-certificate-name-mismatch}
+  - {path: /.well-known/aauth-resource.json, status: 0, file: null, error: tls-certificate-name-mismatch}
+hosts_not_probed:
+- host: dev-3bar-biologics.pantheonsite.io
+  reason: >-
+    A Pantheon platform hostname for a pre-production environment, not a host 3Bar Biologics
+    presents as its own. It is reachable and serves the same WordPress REST API, but discovery
+    documents found there would not be a statement the company publishes, so it is excluded from the
+    well-known measurement. Its existence is recorded as a finding in
+    security/3bar-biologics-domain-security.yml instead.
+- host: live-3bar-biologics.pantheonsite.io
+  reason: Same as above — a platform hostname, not a company-presented host.
+summary:
+  probed: 18
+  found: 0
+  hosts_reachable: 1
+  hosts_unreachable: 1

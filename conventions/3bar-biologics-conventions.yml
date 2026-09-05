@@ -1,0 +1,156 @@
+generated: '2026-09-05'
+method: probed
+source: live responses from https://www.3barbiologics.com/wp-json/ + openapi/ derived parameters
+description: >-
+  Cross-cutting request/response semantics for the WordPress REST content API behind
+  www.3barbiologics.com. 3Bar Biologics publishes no API documentation of any kind, so every
+  convention below was read off live responses and the server's own OPTIONS schema documents on
+  2026-09-05, or is documented WordPress core behaviour that this surface inherits. Nothing here is
+  a provider assertion.
+authentication:
+  style: none for reads
+  detail: >-
+    Anonymous read. No key, token or account. Writes require a WordPress application password
+    (Basic over TLS) that has no public issuance path.
+  artifact: authentication/3bar-biologics-authentication.yml
+idempotency:
+  supported: false
+  coverage: na
+  idempotency_key_header: null
+  detail: >-
+    Marked `na` rather than `none` because the public surface has no write operations at all: every
+    anonymously reachable operation is a GET, and every mutating route returns 401 without a
+    credential that cannot be obtained publicly. There is no Idempotency-Key header, parameter or
+    replay window accepted or documented anywhere. GETs are idempotent by HTTP method semantics,
+    which is not the same thing as an idempotency guarantee for retried writes — but with no
+    reachable write surface there is nothing for such a guarantee to protect.
+reversibility:
+  grade: na
+  detail: >-
+    The public surface is read-only, so there is no action for an agent to take back. No cancel,
+    refund, void, reverse, undo, rollback or restore operation exists, and none is needed. This is
+    an honest `na`, not a zero: reversibility, dry-run and idempotency are all inapplicable to a
+    provider with no reachable write surface.
+  write_surfaces: []
+  reversal_operations: []
+dry_run_mode:
+  supported: false
+  grade: na
+  detail: No write surface, therefore nothing to rehearse.
+pagination:
+  style: page-number with offset alternative
+  params:
+    page: 1-based page number. Default 1. Exceeding the available page count returns 400 rest_post_invalid_page_number.
+    per_page: Records per page. Default 10, minimum 1, maximum 100 — exceeding it returns 400 rest_invalid_param.
+    offset: Alternative to page; skip N records.
+    order: asc or desc.
+    orderby: Sort field; the accepted enum varies per resource and is declared in each route's OPTIONS document.
+  response_headers:
+    X-WP-Total: Total records matching the query.
+    X-WP-TotalPages: Total pages available at the current per_page.
+    Link: RFC 8288 web links; carries rel="next" / rel="prev".
+  detail: >-
+    Verified live: GET /wp/v2/posts?per_page=1 returned X-WP-Total 51, X-WP-TotalPages 51 and a Link
+    header carrying rel="next". All three headers are listed in Access-Control-Expose-Headers, so
+    they are readable from a browser.
+  cursor: false
+  caution: >-
+    X-WP-Total is NOT trustworthy on the media collection. It reports 560 while anonymous pages
+    return 0-5 records — see errors/3bar-biologics-problem-types.yml#media-total-vs-returned. Treat
+    the counter as an upper bound on that one collection and page until a page returns no `next`
+    Link rather than trusting the advertised page count.
+field_selection:
+  supported: true
+  params:
+    _fields: Comma-separated allowlist of top-level response fields — a genuine sparse-fieldset control.
+    _embed: Inline embeddable linked resources (author, featured media, terms) under `_embedded`.
+    _links: HAL-style link relations are present on every record by default.
+  detail: >-
+    Worth using. An unfiltered post record on this site is roughly 16KB; `_fields=id,slug,title,link`
+    reduces it to a few hundred bytes.
+filtering:
+  detail: >-
+    Per-resource query parameters are declared in the OPTIONS document for each route and carried
+    verbatim into the derived OpenAPI documents in openapi/. Common across post types: search, slug,
+    include, exclude, after, before, modified_after, modified_before, status, categories, tags,
+    author, order, orderby.
+  taxonomy_filters:
+  - 'GET /wp/v2/posts?categories=<id>'
+  - 'GET /wp/v2/posts?tags=<id>'
+context_parameter:
+  param: context
+  values: [view, embed, edit]
+  default: view
+  detail: >-
+    `view` is the full public record, `embed` a trimmed subset for embedding. `edit` requires
+    authentication and returns 401 anonymously. Field visibility per context is declared in each
+    property of the published schemas.
+request_tracing:
+  request_id_header: x-styx-req-id
+  detail: >-
+    Responses carry `x-styx-req-id` and `x-pantheon-styx-hostname`, emitted by the Pantheon hosting
+    platform rather than by the application. There is no provider support channel for the API to
+    quote them to, so they are useful for correlating your own retries and little else.
+versioning:
+  scheme: uri-path namespace
+  current: wp/v2
+  namespaces_registered: 17
+  detail: >-
+    The version is a namespace segment in the path. 17 namespaces were registered at capture
+    (wp/v2, oembed/1.0, yoast/v1, elementor/v1, elementor-pro/v1, redirection/v1, leadin/v1,
+    wp-smush/v1, hub-connector/v1, wp-abilities/v1 and others). 3Bar Biologics publishes no
+    versioning or deprecation policy; the namespace set moves when the site's WordPress core and
+    plugins are upgraded, with no announcement.
+  artifact: lifecycle/3bar-biologics-lifecycle.yml
+error_envelope:
+  format: wp-rest-error
+  rfc9457: false
+  shape: '{code, message, data:{status, params?, details?}}'
+  detail: >-
+    Match on `code`, never on `message`. Note that this envelope is not universal on this
+    deployment: the media collection returns an HTML error page, not a JSON envelope, on its 500.
+    Full catalog in errors/3bar-biologics-problem-types.yml.
+  artifact: errors/3bar-biologics-problem-types.yml
+rate_limiting:
+  documented: false
+  response_headers: []
+  detail: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After header appeared on any response observed during
+    this pass, and no limits are published. An agent has no runtime signal here and must
+    self-throttle.
+  artifact: rate-limits/3bar-biologics-rate-limits.yml
+caching:
+  observed_headers:
+    Cache-Control: 'public, max-age=604800'
+  detail: >-
+    Observed on GET /wp/v2/posts. Responses are declared publicly cacheable for 7 days. Varnish sits
+    in front (via: 1.1 varnish, with x-cache MISS/HIT and x-served-by naming Fastly edge nodes), so
+    freshness of any read is an edge-cache property rather than a contract — a record updated on the
+    site may be served stale for up to a week.
+  conditional_requests: not observed
+cors:
+  access_control_expose_headers: [X-WP-Total, X-WP-TotalPages, Link]
+  access_control_allow_headers: [Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type]
+indexing:
+  x_robots_tag: noindex
+  detail: >-
+    Every API response carries `X-Robots-Tag: noindex`. The data is public and machine-readable but
+    the provider signals it should not be indexed as content.
+content_type:
+  request: application/json
+  response: application/json; charset=UTF-8
+hosting:
+  platform: Pantheon
+  detail: >-
+    Served by nginx behind Varnish/Fastly on Pantheon. The platform hostnames leak into the
+    production site's own HTML — see security/3bar-biologics-domain-security.yml.
+evidence:
+- url: https://www.3barbiologics.com/wp-json/wp/v2/posts?per_page=1
+  http_status: 200
+  headers_observed: [x-wp-total, x-wp-totalpages, link, allow, cache-control, x-robots-tag, access-control-expose-headers, x-styx-req-id, via, x-cache]
+- url: https://www.3barbiologics.com/wp-json/wp/v2/posts?per_page=101
+  http_status: 400
+- url: https://www.3barbiologics.com/wp-json/wp/v2/posts?page=999
+  http_status: 400
+- url: https://www.3barbiologics.com/wp-json/
+  http_status: 200
