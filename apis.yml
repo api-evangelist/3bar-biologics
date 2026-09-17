@@ -234,32 +234,6 @@ apis:
     url: conformance/3bar-biologics-conformance.yml
   - type: Lifecycle
     url: lifecycle/3bar-biologics-lifecycle.yml
-- aid: 3bar-biologics:3bar-biologics-oembed-api
-  name: 3Bar Biologics oEmbed API
-  description: >-
-    Public oEmbed 1.0 provider endpoint for 3barbiologics.com URLs, returning embeddable rich metadata
-    — provider, author, title, thumbnail and iframe HTML — for any post or page on the site. This is the
-    one endpoint on the surface that implements a published third-party interoperability standard rather
-    than a WordPress-internal convention.
-  humanURL: https://www.3barbiologics.com/wp-json/
-  image: https://www.3barbiologics.com/wp-content/uploads/2021/05/3B-Logo-Website-512-x-512.png
-  baseURL: https://www.3barbiologics.com/wp-json
-  tags:
-  - oEmbed
-  - Metadata
-  properties:
-  - type: OpenAPI
-    url: openapi/3bar-biologics-oembed-api-openapi.yml
-  - type: Overlay
-    url: overlays/3bar-biologics-oembed-api-overlay.yaml
-  - type: Authentication
-    url: authentication/3bar-biologics-authentication.yml
-  - type: ErrorCatalog
-    url: errors/3bar-biologics-problem-types.yml
-  - type: Conventions
-    url: conventions/3bar-biologics-conventions.yml
-  - type: Conformance
-    url: conformance/3bar-biologics-conformance.yml
 - aid: 3bar-biologics:3bar-biologics-seo-api
   name: 3Bar Biologics SEO Metadata API
   description: >-
@@ -330,12 +304,34 @@ apis:
     url: conformance/3bar-biologics-conformance.yml
   - type: Lifecycle
     url: lifecycle/3bar-biologics-lifecycle.yml
+- aid: 3bar-biologics:3bar-biologics-o-embed-api
+  name: 3Bar Biologics o Embed API
+  description: >-
+    Public oEmbed 1.0 provider endpoint for 3barbiologics.com URLs, returning embeddable rich metadata
+    — provider, author, title, thumbnail and iframe HTML — for any post or page on the site.
+  humanURL: https://www.3barbiologics.com/wp-json/
+  baseURL: https://www.3barbiologics.com/wp-json
+  tags:
+  - o Embed
+  properties:
+  - type: OpenAPI
+    url: openapi/3bar-biologics-o-embed-api-openapi.yml
+  - type: Authentication
+    url: authentication/3bar-biologics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/3bar-biologics-problem-types.yml
+  - type: Conventions
+    url: conventions/3bar-biologics-conventions.yml
+  - type: Conformance
+    url: conformance/3bar-biologics-conformance.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/3bar-biologics-oembed-api-overlay.yaml
 - type: Overlay
   url: overlays/3bar-biologics-taxonomy-api-overlay.yaml
 - type: Website
