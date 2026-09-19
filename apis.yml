@@ -312,6 +312,8 @@ apis:
   humanURL: https://www.3barbiologics.com/wp-json/
   baseURL: https://www.3barbiologics.com/wp-json
   tags:
+  - oEmbed
+  tags_raw:
   - o Embed
   properties:
   - type: OpenAPI
