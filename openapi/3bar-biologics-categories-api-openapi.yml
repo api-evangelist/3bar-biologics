@@ -1,0 +1,276 @@
+openapi: 3.2.0
+info:
+  title: 3Bar Biologics Taxonomy Categories API
+  version: wp/v2
+  description: Public, unauthenticated read access to the classification terms behind the 3BarBio news archive — the post categories and post tags used to segment company news, press releases and technical insights. Verified live on 2026-09-05 at 5 categories and 3 tags.
+  contact:
+    name: 3Bar Biologics
+    email: Sales@3BarBiologics.com
+    url: https://www.3barbiologics.com/contact-us/
+  x-generated-from: the server's own published route index (GET /wp-json/) and per-route JSON Schemas (HTTP OPTIONS), fetched 2026-09-05. No part of this document was authored from documentation or inference.
+  x-provenance:
+    method: derived
+    source: https://www.3barbiologics.com/wp-json/
+    fetched: '2026-09-05'
+servers:
+- url: https://www.3barbiologics.com/wp-json
+  description: 3BarBio WordPress REST API root.
+tags:
+- name: Categories
+  description: Post categories used to segment the 3BarBio news archive.
+paths:
+  /wp/v2/categories:
+    get:
+      operationId: listCategories
+      summary: List categories
+      description: 'Returns the categories terms used to classify the 3BarBio news archive. 5 categories at capture: In the News (22 posts), Insights (19), Press Release (19), News (15), Uncategorized (4).'
+      tags:
+      - Categories
+      parameters:
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        required: false
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: hide_empty
+        in: query
+        required: false
+        description: Whether to hide terms not assigned to any posts.
+        schema:
+          type: boolean
+          default: false
+      - name: include
+        in: query
+        required: false
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: order
+        in: query
+        required: false
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: orderby
+        in: query
+        required: false
+        description: Sort collection by term attribute.
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+      - name: page
+        in: query
+        required: false
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: parent
+        in: query
+        required: false
+        description: Limit result set to terms assigned to a specific parent.
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      - name: post
+        in: query
+        required: false
+        description: Limit result set to terms assigned to a specific post.
+        schema:
+          type: integer
+          default: null
+      - name: search
+        in: query
+        required: false
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: slug
+        in: query
+        required: false
+        description: Limit result set to terms with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: A page of categories terms.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '400':
+          description: '`rest_invalid_param` — a query parameter failed validation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/categories/{id}:
+    get:
+      operationId: getCategory
+      summary: Get a single category by id
+      description: Returns one category term.
+      tags:
+      - Categories
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique numeric identifier for the category term.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        required: false
+        description: Scope under which the request is made.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: The requested category term.
+          headers:
+            X-WP-Total:
+              description: Total records matching the query.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total pages available at the current per_page.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 web links; carries rel="next" / rel="prev".
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: '`rest_term_invalid` — the id did not resolve to a term in this taxonomy.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the term.
+          type: integer
+        count:
+          description: Number of published posts for the term.
+          type: integer
+        description:
+          description: HTML description of the term.
+          type: string
+        link:
+          description: URL of the term.
+          type: string
+          format: uri
+        name:
+          description: HTML title for the term.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the term unique to its type.
+          type: string
+        taxonomy:
+          description: Type attribution for the term.
+          type: string
+          enum:
+          - category
+        parent:
+          description: The parent term ID.
+          type: integer
+        meta:
+          description: Meta fields.
+          type: object
+          additionalProperties: true
+      description: A WordPress `category` term, exactly as the server publishes its schema at OPTIONS https://www.3barbiologics.com/wp-json/wp/v2/categories.
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Match on `code`; `message` is localized and not stable.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. `rest_invalid_param`.
+        message:
+          type: string
+          description: Human-readable, localized message. Do not parse.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code, repeated in the body.
+            params:
+              type: object
+              additionalProperties:
+                type: string
+              description: 'Present only on `rest_invalid_param`: parameter name to validation message.'
+      required:
+      - code
+      - message
