@@ -64,66 +64,110 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-3Bar Biologics (3BarBio) is an agricultural biotechnology company in Columbus, Ohio, spun out of
-research at The Ohio State University and operating as the first contract development and
-manufacturing organization (CDMO) dedicated to agricultural biologicals. Its patented LiveMicrobe
-platform — including the Iso-Pak and Re-Pak delivery systems — keeps beneficial bacteria viable
-through storage and distribution, the problem that has historically limited adoption of microbial
-crop inputs.
+3Bar Biologics (3BarBio) is an agricultural biotechnology company in Columbus, Ohio, spun out of research at The Ohio State University and operating as the first contract development and manufacturing organization (CDMO) dedicated to agricultural biologicals. Its business is getting living microbes to the field alive: the patented LiveMicrobe platform, including the Iso-Pak and Re-Pak delivery systems, keeps beneficial bacteria viable through storage and distribution, the problem that has historically limited adoption of microbial crop inputs. The company sells design, development, biomanufacturing and fulfillment services to discovery companies, distributors and bulk suppliers, and previously marketed its own Bio-YIELD inoculant to corn, soybean and wheat growers in the eastern Corn Belt. 3Bar Biologics is a manufacturer and services business, not a software vendor: it publishes no developer program, no developer portal, no API documentation, no SDKs and no pricing for any programmatic product. The only machine-readable interface it exposes is the WordPress REST content API behind its corporate website at www.3barbiologics.com, which is captured here for discovery purposes. That surface is anonymously readable, read-only, entirely undocumented by the company, and carries two reproducible defects on its media collection that are recorded in this profile.
 
-## What this profile found
+**Areas:** Company · Agriculture · AgTech · Biotechnology · Agricultural Biologicals · Biomanufacturing · CDMO · Microbials · Crop Inputs · Sustainability · Contract Manufacturing
 
-**3Bar Biologics is not a software vendor and publishes no developer program.** There is no
-developer portal, no API documentation, no SDK, no client library in any package registry, no GitHub
-organization and no pricing for any programmatic product.
+## 3Bar Biologics on APIs.io
 
-The only machine-readable interface the company exposes is the **WordPress REST content API** behind
-its corporate website at `www.3barbiologics.com`. It is anonymously readable, read-only, and
-incidental to the website rather than offered as a product. It carries the company's news archive and
-marketing pages — nothing about strains, formulations, batches, viability testing or customers.
+Everything profiled for 3Bar Biologics is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/3bar-biologics/](https://apis.io/providers/3bar-biologics/)** — or go straight to one of the APIs or properties below.
 
-That surface is nonetheless real, self-describing and worth cataloging, so it is documented here in
-full: **9 APIs, 19 operations**, every one derived from the server's own published route index
-(`GET /wp-json/`, 360 routes across 17 namespaces) and its per-route JSON Schemas (`HTTP OPTIONS`).
-No part of any specification in `openapi/` was authored from documentation or inference.
+### APIs (1)
 
-## Defects verified on this deployment (2026-09-05)
+- [3Bar Biologics Website (WordPress REST)](https://apis.io/apis/3bar-biologics/3barbiologics-com-website-wordpress-rest/) — The public WordPress REST API (wp-json) of the 3Bar Biologics website at www.3barbiologics.com: the route index of the site's content management system,…
 
-These were reproduced live, not inferred. They are recorded in `errors/`, `lifecycle/`, `security/`
-and at the operation level in `overlays/`.
+### Published properties
 
-| # | Surface | Finding |
-|---|---|---|
-| 1 | `GET /wp/v2/media` | Returns **HTTP 500** for any ascending numeric or date sort (`order=asc`, `orderby=date\|id\|author`). The body is HTML, not the JSON error envelope. `orderby=title\|slug` ascending works; descending always works. Posts and pages are unaffected. |
-| 2 | `GET /wp/v2/media` | Advertises `X-WP-Total: 560` while anonymous pages return 0–5 records with **HTTP 200**. Fails silently — an empty 200 is indistinguishable from an exhausted collection. |
-| 3 | `GET /yoast/v1/get_head` | Returns **404 with a populated, parseable body** (the head of the site's 404 page). Branch on status, not body shape. |
-| 4 | `https://www.3barbiologics.com/careers/` | **Infinite redirect loop** — `/careers/` → `/about-us/careers/` → `/careers/`. The page is readable through the Pages API but unreachable in a browser. |
-| 5 | `https://3barbiologics.com/` | **Apex domain serves a certificate that does not cover it** (`CN=pantheonsite.io`). HTTPS fails; plain HTTP returns 404 without redirecting. Only the `www.` host works. |
-| 6 | `https://www.3barbiologics.com/` | **79 absolute URLs to Pantheon pre-production hostnames** in the production HTML, including the site's only Privacy Policy link, which points at `dev-3bar-biologics.pantheonsite.io`. That dev environment is publicly reachable and serves the same REST API. |
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## Contents
+#### MCP servers (1)
 
-| Path | What is there |
+Model Context Protocol servers that expose the API to agents.
+
+- [3bar-biologics-mcp.yml](https://apis.io/servers/3bar-biologics/3bar-biologics-mcp-yml/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [3Bar Biologics Agentic Access](https://apis.io/agentic-access/3bar-biologics/3bar-biologics-agentic-access/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [3Bar Biologics Authentication](https://apis.io/security/3bar-biologics/3bar-biologics-authentication/)
+- [3Bar Biologics Domain Security](https://apis.io/security/3bar-biologics/3bar-biologics-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [3Bar Biologics Plans Pricing](https://apis.io/plans/3bar-biologics/3bar-biologics-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [3Bar Biologics Rate Limits](https://apis.io/rate-limits/3bar-biologics/3bar-biologics-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.3barbiologics.com/)
+- [Blog](https://www.3barbiologics.com/news-insights/)
+- [Privacy policy](https://www.3barbiologics.com/privacy-policy/)
+
+## API Evangelist rating
+
+**Kin Score 17.6** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
 |---|---|
-| `openapi/` | 9 OpenAPI 3.1 documents, 19 operations, derived from the server's published schemas |
-| `overlays/` | Per-spec Overlay 1.0.0 documents carrying provenance, stability posture and the defects above |
-| `authentication/` | Anonymous read; application passwords gate the unreachable write surface |
-| `conventions/` | Pagination, sparse fields, caching, CORS, tracing. Idempotency and reversibility are `na` — read-only surface |
-| `errors/` | 13 problem types and 2 silent failures, every one observed live |
-| `data-model/` | 10 entities and their relationships — and an explicit note on the domain entities that do **not** exist |
-| `lifecycle/` | No versioning policy, no deprecation policy, no SLA, no status page, no changelog. Graded `unmanaged` |
-| `conformance/` | 16 standards checked; domain standards (ADAPT, ISOBUS, GS1) recorded as inapplicable, not failed |
-| `security/` | Domain security probe with 5 findings, including the apex TLS mismatch and the dev-host leak |
-| `well-known/` | 18 probes across 2 hosts, 0 documents found — a recorded absence |
-| `rate-limits/`, `plans/` | Honest zeros: no limits published, no pricing published |
-| `packages/` | 0 packages. Every major registry queried; no first-party library exists |
-| `mcp/` | No server exists. A candidate tool list only, `mode: none` |
-| `skills/` | 2 packaged Agent Skills grounded in verified operationIds |
-| `examples/` | 11 working requests and 2 counter-examples, all executed successfully |
-| `agentic-access/` | Per-operation access contract. Entire surface classified `safe-read-only` |
+| Discoverability | 57.1 |
+| Contract quality | 6.5 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 25.6 |
+| Access clarity | 10.5 |
 
-## Company
+**Agent readiness 11.9** — agent-aware
 
-- **Website** — https://www.3barbiologics.com/ (use the `www.` host)
-- **Contact** — Sales@3BarBiologics.com · 1-877-3BAR-BIO · 1275 Kinnear Road, Columbus, OH 43212
-- **LinkedIn** — https://www.linkedin.com/company/3bar-biologics-inc-/
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | documented (partial credit) |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 20.6** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/3bar-biologics/](https://apis.io/providers/3bar-biologics/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for 3Bar Biologics: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/3bar-biologics/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
